@@ -20,4 +20,24 @@ public enum ProjectTemplate {
     public String getDisplayName() {
         return displayName;
     }
+
+    public String getDomainGroup() {
+        switch (this) {
+            case AI_ML:
+            case DATA_SCIENCE:
+                return "AI_DATA";
+            case WEB_MOBILE:
+            case SOFTWARE_MANAGEMENT:
+            case ED_TECH:
+                return "WEB_SOFTWARE";
+            case CLOUD_DEVOPS:
+            case CYBERSECURITY:
+                return "CLOUD_INFRA";
+            case BLOCKCHAIN:
+            case GAME_DEV:
+                return "EMERGING_TECH";
+            default:
+                return "WEB_SOFTWARE";
+        }
+    }
 }
