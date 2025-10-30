@@ -5,9 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import research.project.documate.backend.Backend.DTOs.GitDiffAnalysisDTO;
 import research.project.documate.backend.Backend.DTOs.ProjectAnalysisDTO;
-import research.project.documate.backend.Backend.DTOs.ReadmeGenerationResult;
+import research.project.documate.backend.Backend.DTOs.ReadmeGenerationResultDTO;
 import research.project.documate.backend.Backend.Entity.ProjectEntity;
+import research.project.documate.backend.Backend.Entity.ReadmeFileEntity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,14 +21,14 @@ import java.util.List;
 public class ReadmeAiService {
     private final GeminiService geminiService;
 
-    public ReadmeGenerationResult generateReadme(ProjectEntity project, ProjectAnalysisDTO analysis) {
+    public ReadmeGenerationResultDTO generateReadme(ProjectEntity project, ProjectAnalysisDTO analysis) {
         String prompt = createDomainSpecificPrompt(project, analysis);
         String aiResponse = geminiService.generateContent(prompt);
         log.info("Response from AI: {}", aiResponse);
         return processAiResponse(project, aiResponse);
     }
 
-    private ReadmeGenerationResult processAiResponse(ProjectEntity project, String aiResponse) {
+    private ReadmeGenerationResultDTO processAiResponse(ProjectEntity project, String aiResponse) {
         try {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode rootNode = mapper.readTree(aiResponse);
@@ -49,7 +51,7 @@ public class ReadmeAiService {
             List<String> keyFeatures = extractKeyFeatures(readmeJson.path("key_features"));
             List<String> setupSteps = extractSetupSteps(readmeJson.path("setup_steps"));
 
-            return ReadmeGenerationResult.builder()
+            return ReadmeGenerationResultDTO.builder()
                     .projectId(project.getId())
                     .content(readmeContent)
                     .changeSummary(changeSummary)
@@ -64,7 +66,7 @@ public class ReadmeAiService {
         }
     }
 
-    private ReadmeGenerationResult createDefaultReadme(ProjectEntity project) {
+    private ReadmeGenerationResultDTO createDefaultReadme(ProjectEntity project) {
         String defaultContent = String.format(
                 "# %s\n\n" +
                         "## Description\nA project created with DocuMate.\n\n" +
@@ -73,7 +75,7 @@ public class ReadmeAiService {
                 project.getTitle()
         );
 
-        return ReadmeGenerationResult.builder()
+        return ReadmeGenerationResultDTO.builder()
                 .projectId(project.getId())
                 .content(defaultContent)
                 .changeSummary("Initial project setup")
@@ -298,5 +300,59 @@ public class ReadmeAiService {
             default:
                 return getDomainReadmeStructure("WEB_SOFTWARE");
         }
+    }
+
+    public ReadmeGenerationResultDTO generateUpdatedReadme(ProjectEntity project,
+                                                           ReadmeFileEntity currentReadme,
+                                                           GitDiffAnalysisDTO diffAnalysis) {
+        String prompt = createUpdatePrompt(project, currentReadme, diffAnalysis);
+        String aiResponse = geminiService.generateContent(prompt);
+        return processAiResponse(project, aiResponse);
+    }
+
+    private String createUpdatePrompt(ProjectEntity project, ReadmeFileEntity currentReadme, GitDiffAnalysisDTO diffAnalysis) {
+        return String.format("""
+            Update the existing README based on recent code changes.
+            
+            Current README:
+            %s
+            
+            Recent Changes:
+            - Files changed: %d
+            - Modified files: %s
+            - Change summary: %s
+            
+            Project: %s (%s)
+            
+            Please provide an updated README that reflects these changes.
+            Use the same JSON format as before.
+            """,
+                currentReadme.getContent(),
+                diffAnalysis.getFilesChanged(),
+                diffAnalysis.getModifiedFiles(),
+                diffAnalysis.getChangeSummary(),
+                project.getTitle(),
+                project.getTemplate().getDisplayName()
+        );
+    }
+
+    public ReadmeGenerationResultDTO regenerateWithPrompt(ProjectEntity project, String enhancedPrompt) {
+        String fullPrompt = String.format("""
+            Please improve this README based on user feedback:
+            
+            Current README:
+            %s
+            
+            Please provide the improved README in the same JSON format.
+            """, enhancedPrompt);
+
+        return processAiResponse(project, geminiService.generateContent(fullPrompt));
+    }
+    private String getUserRequestPart(String enhancedPrompt) {
+        // Extract user request part from the enhanced prompt
+        if (enhancedPrompt.contains("User requested changes:")) {
+            return enhancedPrompt.split("User requested changes:")[1].trim();
+        }
+        return enhancedPrompt;
     }
 }

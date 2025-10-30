@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 @Builder
-public class ReadmeGenerationResult {
+public class ReadmeGenerationResultDTO {
     private Long projectId;
     private String content;
     private String changeSummary;
