@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface ReadmeFileRepository extends JpaRepository<ReadmeFileEntity, Long> {
-    Optional<Object> findByProject(ProjectEntity project);
+    Optional<ReadmeFileEntity> findByProject(ProjectEntity project);
 
-    Optional<Object> findTopByProjectAndCommitHashNotOrderByCreatedAtDesc(ProjectEntity project, String initial);
+    Optional<ReadmeFileEntity> findTopByProjectAndCommitHashNotOrderByCreatedAtDesc(ProjectEntity project, String initial);
 }

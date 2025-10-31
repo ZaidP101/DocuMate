@@ -2,6 +2,9 @@ package research.project.documate.backend.Backend.Service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.springframework.stereotype.Service;
 import research.project.documate.backend.Backend.DTOs.ReadmeDiffDTO;
 import research.project.documate.backend.Backend.DTOs.ReadmeGenerationResultDTO;
@@ -12,10 +15,13 @@ import research.project.documate.backend.Backend.Entity.ReadmeFileEntity;
 import research.project.documate.backend.Backend.Repository.ProjectRepository;
 import research.project.documate.backend.Backend.Repository.ReadmeFileRepository;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -47,32 +53,54 @@ public class ReadmeService {
         ProjectEntity project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
 
-        // 1. Update the README in database with final content
-        ReadmeFileEntity currentReadme = readmeFileRepository.findByProject(project)
-                .orElseThrow(() -> new RuntimeException("No README found"));
+        Optional<ReadmeFileEntity> readmeOpt = readmeFileRepository.findByProject(project); // Update the README in database with final content
+        if (readmeOpt.isEmpty()) {
+            throw new RuntimeException("No README found");
+        }
+        ReadmeFileEntity currentReadme = readmeOpt.get();
 
         currentReadme.setContent(pushRequest.getContent());
         readmeFileRepository.save(currentReadme);
 
-        // 2. Write to actual README.md file in project folder
-        writeReadmeToFile(project, pushRequest.getContent());
+        writeReadmeToFile(project, pushRequest.getContent()); // Write to actual README.md file in project folder
+        executeGitCommandsWithJGit(project); // Execute Git commands
+    }
 
-        // 3. Git add, commit, push would happen here
-        // You'll need to implement this part
+    private void executeGitCommandsWithJGit(ProjectEntity project) {
+        try{
+            FileRepositoryBuilder builder = new FileRepositoryBuilder();
+            Repository repository = builder.setGitDir(new File(project.getLocalPath(), ".git"))
+                    .readEnvironment()
+                    .findGitDir()
+                    .build();
+            Git git = new Git(repository);
+            git.add().addFilepattern(".").call(); // add
+            git.commit()                            // commit
+                    .setMessage("Readme Updated -automated")
+                    .setAuthor("DocuMate", "documate@system")
+                    .call();
+            git.push().call(); // push
+
+            git.close();
+            log.info("JGit Completed Process Successfully ");
+        } catch (Exception e) {
+            log.info("Error executing JGit commands", e);
+            throw new RuntimeException("JGit operation failed",e);
+        }
     }
 
     private void writeReadmeToFile(ProjectEntity project, String content) {
         try {
             Path readmePath = Paths.get(project.getLocalPath(), "README.md");
-            Files.write(readmePath, content.getBytes());
+            Files.write(readmePath, content.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            log.info("README.md file updated for project: {}", project.getTitle());
         } catch (IOException e) {
-            throw new RuntimeException("Failed to write README.md file", e);
+            throw new RuntimeException("Failed to write README.md file for project: " + project.getTitle(), e);
         }
     }
 
     private ReadmeFileEntity getNewlyGeneratedReadme(ProjectEntity project) {
-        // Get the most recently generated README (not yet approved)
-        return readmeFileRepository.findTopByProjectAndCommitHashNotOrderByCreatedAtDesc(project, "INITIAL")
+        return readmeFileRepository.findTopByProjectAndCommitHashNotOrderByCreatedAtDesc(project, "INITIAL") // Get the most recently generated README (not yet approved)
                 .orElseThrow(() -> new RuntimeException("No newly generated README found"));
     }
 
@@ -80,15 +108,13 @@ public class ReadmeService {
         ProjectEntity project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
 
-        // Send to Gemini with user prompt
-        String enhancedPrompt = request.getCurrentContent() +
+        String enhancedPrompt = request.getCurrentContent() + // Send to Gemini with user prompt
                 "\n\nUser requested changes: " + request.getUserPrompt();
 
         ReadmeGenerationResultDTO newResult = readmeAiService.regenerateWithPrompt(
                 project, enhancedPrompt);
 
-        // Return updated diff for frontend
-        return ReadmeDiffDTO.builder()
+        return ReadmeDiffDTO.builder() // Return updated diff for frontend
                 .oldContent(request.getCurrentContent())
                 .newContent(newResult.getContent())
                 .changeSummary("Regenerated based on user request: " + request.getUserPrompt())

@@ -23,23 +23,20 @@ public class GitTriggerService {
     private final ReadmeAiService readmeAiService;
 
     public void processGitPush(GitPushEventDTO pushEvent) {
-        // 1. Find project by path
-        ProjectEntity project = projectRepository.findByLocalPath(pushEvent.getProjectPath())
+        launchNotification("DocuMate System Started - Processing README update for: " + pushEvent.getProjectPath());
+
+        ProjectEntity project = projectRepository.findByLocalPath(pushEvent.getProjectPath())  //Find project by path
                 .orElseThrow(() -> new RuntimeException("Project not found"));
 
-        // 2. Get current README from DB
-        ReadmeFileEntity currentReadme = readmeFileRepository.findByProject(project)
+        ReadmeFileEntity currentReadme = readmeFileRepository.findByProject(project) //Get current README from DB
                 .orElseThrow(() -> new RuntimeException("No README found for project"));
 
-        // 3. Analyze Git changes
-        GitDiffAnalysisDTO diffAnalysis = gitDiffService.analyzeChanges(project, pushEvent.getCommitHash());
+        GitDiffAnalysisDTO diffAnalysis = gitDiffService.analyzeChanges(project, pushEvent.getCommitHash()); // Analyze Git changes
 
-        // 4. Generate new README
-        ReadmeGenerationResultDTO newReadme = readmeAiService.generateUpdatedReadme(
+        ReadmeGenerationResultDTO newReadme = readmeAiService.generateUpdatedReadme( // Generate new README
                 project, currentReadme, diffAnalysis);
 
-        // 5. Save new README to DB (but don't write file yet)
-        ReadmeFileEntity updatedReadme = ReadmeFileEntity.builder()
+        ReadmeFileEntity updatedReadme = ReadmeFileEntity.builder() //Save new README to DB (but don't write file yet)
                 .project(project)
                 .content(newReadme.getContent())
                 .commitHash(pushEvent.getCommitHash())
@@ -50,12 +47,22 @@ public class GitTriggerService {
 
         ReadmeFileEntity savedReadme = readmeFileRepository.save(updatedReadme);
 
-        // 6. Notify frontend (via WebSocket/API) to show diff view
-        notifyFrontendForApproval(project, currentReadme, savedReadme);
+        launchNotification("README generated successfully! View in DocuMate app. Project: " + project.getTitle());//Notify frontend via API to show diff view
     }
+    private void launchNotification(String message) {
+        try {
+            String command;
+            if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+                command = "cmd.exe /c mshta vbscript:Execute(\"msgbox \"\"" + message + "\"\"\":close\")";
+            } else {
+                command = "zenity --info --text=\"" + message + "\"";
+            }
 
-    private void notifyFrontendForApproval(ProjectEntity project, ReadmeFileEntity oldReadme, ReadmeFileEntity newReadme) {
-        // This will trigger the Electron app to show diff view
-        // You can use WebSocket or have frontend poll for updates
+            ProcessBuilder builder = new ProcessBuilder(command.split(" "));
+            builder.start();
+
+        } catch (Exception e) {
+            log.error("Failed to show popup", e);
+        }
     }
 }

@@ -17,25 +17,20 @@ public class ReadmeController {
     private final ReadmeService readmeService;
 
     @GetMapping("/{projectId}/diff")
-    public ResponseEntity<ReadmeDiffDTO> getReadmeDiff(@PathVariable Long projectId) {
-        // Returns old vs new README for diff view
+    public ResponseEntity<ReadmeDiffDTO> getReadmeDiff(@PathVariable Long projectId) { // Returns old vs new README for diff view
         ReadmeDiffDTO diff = readmeService.getReadmeDiff(projectId);
         return ResponseEntity.ok(diff);
     }
 
     @PostMapping("/{projectId}/push")
-    public ResponseEntity<String> pushReadme(@PathVariable Long projectId,
-                                             @RequestBody ReadmePushDTO pushRequest) {
-        // User approves - write to actual README.md file
-        readmeService.approveAndPushReadme(projectId, pushRequest);
+    public ResponseEntity<String> pushReadme(@PathVariable Long projectId, @RequestBody ReadmePushDTO pushRequest) {
+        readmeService.approveAndPushReadme(projectId, pushRequest); // User approves - write to actual README.md file
         return ResponseEntity.ok("README updated successfully");
     }
 
     @PostMapping("/{projectId}/regenerate")
-    public ResponseEntity<ReadmeDiffDTO> regenerateReadme(@PathVariable Long projectId,
-                                                          @RequestBody RegenerateRequestDTO request) {
-        // User requests changes via prompt
-        ReadmeDiffDTO updatedDiff = readmeService.regenerateWithPrompt(projectId, request);
+    public ResponseEntity<ReadmeDiffDTO> regenerateReadme(@PathVariable Long projectId, @RequestBody RegenerateRequestDTO request) {
+        ReadmeDiffDTO updatedDiff = readmeService.regenerateWithPrompt(projectId, request);// User requests changes via prompt
         return ResponseEntity.ok(updatedDiff);
     }
 }
