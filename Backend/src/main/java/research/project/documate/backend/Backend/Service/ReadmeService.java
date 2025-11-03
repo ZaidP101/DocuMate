@@ -21,7 +21,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -35,11 +37,11 @@ public class ReadmeService {
         ProjectEntity project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
 
-        ReadmeFileEntity currentReadme = readmeFileRepository.findByProject(project)
+        ReadmeFileEntity currentReadme = readmeFileRepository.findByProjectId(projectId)
                 .orElseThrow(() -> new RuntimeException("No README found"));
 
         // This would be the newly generated README from git push
-        ReadmeFileEntity newReadme = getNewlyGeneratedReadme(project);
+        ReadmeFileEntity newReadme = getNewlyGeneratedReadme(project, currentReadme.getId());
 
         return ReadmeDiffDTO.builder()
                 .oldContent(currentReadme.getContent())
@@ -99,9 +101,22 @@ public class ReadmeService {
         }
     }
 
-    private ReadmeFileEntity getNewlyGeneratedReadme(ProjectEntity project) {
-        return readmeFileRepository.findTopByProjectAndCommitHashNotOrderByCreatedAtDesc(project, "INITIAL") // Get the most recently generated README (not yet approved)
-                .orElseThrow(() -> new RuntimeException("No newly generated README found"));
+    private ReadmeFileEntity getNewlyGeneratedReadme(ProjectEntity project, Long currentReadmeId) {
+        List<ReadmeFileEntity> allReadmes = readmeFileRepository.findByProjectOrderByCreatedAtDesc(project);
+
+        log.info("Available READMEs for project {}: {}", project.getId(),
+                allReadmes.stream()
+                        .map(r -> "ID: " + r.getId() + ", Commit: " + r.getCommitHash() + ", Created: " + r.getCreatedAt())
+                        .collect(Collectors.toList()));
+
+        // Find the most recent README that's not the current one
+        return allReadmes.stream()
+                .filter(r -> !r.getId().equals(currentReadmeId))
+                .findFirst()
+                .orElseThrow(() -> {
+                    log.error("No newly generated README found. Current README ID: {}", currentReadmeId);
+                    return new RuntimeException("No newly generated README found. Please make a git push first.");
+                });
     }
 
     public ReadmeDiffDTO regenerateWithPrompt(Long projectId, RegenerateRequestDTO request) {

@@ -1,0 +1,60 @@
+.documate-loader-container {
+  height: 100vh;
+  width: 100%;
+  background-color: #0f1117; 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #e2e8f0;
+  font-family: "Segoe UI", sans-serif;
+  overflow: hidden;
+}
+
+.wave {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 6px;
+  height: 40px;
+  margin-bottom: 20px;
+}
+
+.wave span {
+  display: block;
+  width: 6px;
+  height: 20px;
+  background: linear-gradient(180deg, #bd1aa7, #7d0575);
+  border-radius: 3px;
+  animation: waveBounce 1.2s ease-in-out infinite;
+}
+
+.wave span:nth-child(1) { animation-delay: 0s; }
+.wave span:nth-child(2) { animation-delay: 0.1s; }
+.wave span:nth-child(3) { animation-delay: 0.2s; }
+.wave span:nth-child(4) { animation-delay: 0.3s; }
+.wave span:nth-child(5) { animation-delay: 0.4s; }
+
+@keyframes waveBounce {
+  0%, 100% {
+    transform: scaleY(0.4);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scaleY(1.4);
+    opacity: 1;
+  }
+}
+
+.loading-text {
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  animation: fadePulse 2s ease-in-out infinite;
+}
+
+@keyframes fadePulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}

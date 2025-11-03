@@ -1,0 +1,131 @@
+.card {
+  width: 320px;
+  min-height: 200px;
+  background: linear-gradient(145deg, #101013, #1a1a1f);
+  border-radius: 14px;
+  border: 1px solid rgba(212, 8, 212, 0.15);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+  padding: 22px;
+  color: #d1d5db;
+  transition: all 0.35s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(5px);
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(212, 8, 212, 0.18), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 0;
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(212, 8, 212, 0.4);
+  box-shadow: 0 0 12px rgba(212, 8, 212, 0.25);
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.card h3 {
+  font-size: 1.1rem;
+  color: whitesmoke; 
+  margin: 0 0 4px 0;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.card p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: whitesmoke; 
+  line-height: 1.6;
+}
+
+.card .links {
+  color: #e3a8f5;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.card .links:hover {
+  color: #ffffff;
+  text-shadow: 0 0 6px rgba(212, 8, 212, 0.5);
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 1;
+}
+
+.date-modified {
+  font-size: 0.85rem;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+
+.delete-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(212, 8, 212, 0.08);
+  border: 1px solid rgba(212, 8, 212, 0.25);
+  color: #c77cf7;
+  font-size: 0.85rem;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(4px);
+}
+
+.delete-btn:hover {
+  background: rgba(212, 8, 212, 0.18);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 0 10px rgba(212, 8, 212, 0.35);
+}
+
+.delete-btn svg {
+  display: block;
+  stroke: currentColor;
+}
+
+@media (max-width: 340px) {
+  .card {
+    width: 240px;
+    padding: 16px;
+  }
+  .date-modified {
+    font-size: 0.8rem;
+  }
+  .delete-text {
+    display: none;
+  }
+}

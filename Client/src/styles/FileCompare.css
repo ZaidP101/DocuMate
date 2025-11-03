@@ -1,0 +1,119 @@
+.file-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: #e0e0e0;
+  font-family: "Segoe UI", sans-serif;
+  background-color: #0e0e0f;
+}
+
+.file-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  width: 60%;
+  max-width: 1200px;
+  height: 80vh;
+  border-radius: 12px;
+  padding: 30px;
+  gap: 20px;
+  box-sizing: border-box;
+  background: #0e0e0f;
+  box-shadow: 0 0 0 1px #2d2d2d;
+}
+
+.old-file,
+.new-file {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.divider {
+  width: 2px;
+  background: linear-gradient(180deg, rgba(212, 8, 212, 0.6), rgba(255, 255, 255, 0.1));
+  border-radius: 10px;
+}
+
+.old-file h3,
+.new-file h3 {
+  text-align: center;
+  font-size: 1.2rem;
+  color:#a855f7 ;
+  font-weight: 700;
+  margin-bottom: 12px;
+  letter-spacing: 0.6px;
+}
+
+.new-file {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.btn-grp {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  position: absolute;
+  bottom: 15px;
+  right: 20px;
+}
+
+.btn {
+  background: rgba(212, 8, 212, 0.2);
+  border: 1px solid rgba(212, 8, 212, 0.4);
+  color: #e0e0e0;
+  padding: 8px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  background: rgba(212, 8, 212, 0.4);
+  box-shadow: 0 0 10px rgba(212, 8, 212, 0.5);
+  transform: translateY(-2px);
+}
+
+.prompt-input-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 5px;
+  width: 430px;
+  height: 100%;
+  padding: 10px;
+  animation: fadeSlideIn 0.4s ease forwards;
+}
+
+.prompt-input-container input {
+  height: 100%;
+  border: 1px solid rgba(212, 8, 212, 0.4);
+  border-radius: 6px;
+  background-color: transparent;
+  padding: 10px 14px;
+  font-size: 0.95rem;
+  color: #e0e0e0;
+  transition: all 0.3s ease;
+}
+
+.prompt-input-container input:focus {
+  border-color: rgba(212, 8, 212, 0.8);
+  box-shadow: 0 0 8px rgba(212, 8, 212, 0.6);
+  outline: none;
+}
+
+@keyframes fadeSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

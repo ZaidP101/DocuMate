@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class GitPushEventDTO {
+    private Long projectId;
     private String projectPath;
     private String commitHash;
 }

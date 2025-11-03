@@ -16,11 +16,9 @@ public enum ProjectTemplate {
     ProjectTemplate(String displayName) {
         this.displayName = displayName;
     }
-
     public String getDisplayName() {
         return displayName;
     }
-
     public String getDomainGroup() {
         switch (this) {
             case AI_ML:

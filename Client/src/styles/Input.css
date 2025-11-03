@@ -1,0 +1,91 @@
+
+
+.input-container {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+}
+
+.input-label {
+  font-weight: 600;
+  color: #d4d4d4;
+  letter-spacing: 0.3px;
+  font-size: 15px;
+}
+
+
+.input-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+
+.input-icon {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  color: #9a9a9a;
+  opacity: 0.8;
+  pointer-events: none;
+  font-size: 16px;
+}
+
+
+.input-field {
+  width: 100%;
+  padding: 12px;
+  font-size: 15px;
+  height: 45px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(145deg, #1b1b1b, #121212);
+  color: #f2f2f2;
+  outline: none;
+  transition: all 0.3s ease;
+  box-shadow:
+    inset 3px 3px 6px #0a0a0a,
+    inset -3px -3px 6px #242424,
+    0 0 0 2px rgba(212, 8, 212, 0.25);
+}
+
+.input-field.with-icon {
+  padding-left: 38px;
+}
+
+
+.input-field:focus {
+  box-shadow:
+    0 0 0 2px rgba(212, 8, 212, 0.4),
+    inset 2px 2px 5px #0a0a0a,
+    inset -2px -2px 5px #232323;
+  background: linear-gradient(145deg, #1f1f1f, #151515);
+}
+
+
+.input-field:hover {
+  box-shadow:
+    0 0 8px rgba(212, 8, 212, 0.25),
+    inset 2px 2px 5px #0a0a0a,
+    inset -2px -2px 5px #232323;
+}
+
+.input-field:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+
+@keyframes matteGlow {
+  0%, 100% { box-shadow: 0 0 8px rgba(212, 8, 212, 0.4); }
+  50% { box-shadow: 0 0 16px rgba(212, 8, 212, 0.6); }
+}
+
+.input-field:focus-visible {
+  animation: matteGlow 1.6s infinite alternate ease-in-out;
+}

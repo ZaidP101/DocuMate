@@ -1,0 +1,43 @@
+.textarea-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.textarea-input {
+  flex: 1;
+  height: 100%;
+  width: 100%;
+  background: #2c2c2c;
+  outline: none;
+  border-radius: 8px;
+  padding: 12px;
+  resize: none;
+  color: whitesmoke;
+  border: 2px solid #2c2c2c;
+  font-family: monospace;
+  font-size: 0.95rem;
+  transition: border 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+  box-sizing: border-box;
+}
+
+.textarea-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.textarea-input:focus {
+  border-color:  rgba(168, 85, 247, 0.5);
+  box-shadow: 0 0 8px rgba(181, 83, 255, 0.6);
+  background: #383838;
+}
+
+
+.textarea-input::-webkit-scrollbar {
+  width: 6px;
+}
+
+.textarea-input::-webkit-scrollbar-thumb {
+  background: rgba(220, 19, 167, 0.6);
+  border-radius: 8px;
+}

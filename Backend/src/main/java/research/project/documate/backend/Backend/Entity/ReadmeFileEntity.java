@@ -1,5 +1,6 @@
 package research.project.documate.backend.Backend.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +22,7 @@ public class ReadmeFileEntity {
 
     @OneToOne
     @JoinColumn(name = "project_id")
+    @JsonIgnore
     private ProjectEntity project;
 
     @Lob // for large data

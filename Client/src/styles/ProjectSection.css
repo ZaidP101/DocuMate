@@ -1,0 +1,60 @@
+.project-container {
+  display: flex;
+  flex-direction: column;
+  padding: 40px;
+  width: 100%;
+  min-height: 100vh;
+  background: #0d0d0d; 
+  position: relative;
+}
+
+.project-header {
+  margin-bottom: 40px;
+
+}
+
+.project-heading {
+  color: #a855f7; 
+  font-weight: 700;
+  font-size: 32px;
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.descrption-para {
+  font-size: 16px;
+  margin-top: 10px;
+  font-style: italic;
+  color: #bcbcbc;
+}
+
+.project-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+  justify-content: center;
+  padding-bottom: 80px;
+}
+
+.floating-btn {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7e22ce, #9333ea); 
+  color: #fff;
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  font-size: 32px;
+  cursor: pointer;
+  box-shadow: 0 0 25px rgba(147, 51, 234, 0.45);
+  transition: all 0.3s ease;
+}
+
+.floating-btn:hover {
+  background: linear-gradient(135deg, #9333ea, #a855f7);
+  transform: scale(1.1);
+  box-shadow: 0 0 35px rgba(168, 85, 247, 0.7);
+}

@@ -8,6 +8,8 @@ import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.AbstractTreeIterator;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
@@ -38,16 +40,30 @@ public class GitDiffService {
 
             // Get changes from last commit to current
             ObjectId head = repository.resolve("HEAD");
-            ObjectId previousHead = repository.resolve("HEAD~1");
+            if (head == null) {
+                log.warn("No HEAD commit found - repository might be empty");
+                return createEmptyDiffAnalysis(commitHash);
+            }
+            RevWalk revWalk = new RevWalk(repository); // Get previous commit (parent of HEAD)
+            RevCommit currentCommit = revWalk.parseCommit(head);
+
+            if (currentCommit.getParentCount() == 0) {
+                log.info("No parent commit found - this might be the initial commit");
+                return createEmptyDiffAnalysis(commitHash);
+            }
+            RevCommit parentCommit = currentCommit.getParent(0);
+            //ObjectId previousHead = repository.resolve("HEAD~1");
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             DiffFormatter diffFormatter = new DiffFormatter(outputStream);
             diffFormatter.setRepository(repository);
 
             List<DiffEntry> diffs = git.diff()
-                    .setOldTree(prepareTreeParser(repository, previousHead))
-                    .setNewTree(prepareTreeParser(repository, head))
+                    .setOldTree(prepareTreeParser(repository, parentCommit.getTree()))
+                    .setNewTree(prepareTreeParser(repository, currentCommit.getTree()))
                     .call();
+            revWalk.close();
+            git.close();
 
             return GitDiffAnalysisDTO.builder()
                     .filesChanged(diffs.size())
@@ -57,10 +73,20 @@ public class GitDiffService {
                     .build();
 
         } catch (Exception e) {
-            log.error("Error analyzing git diff", e);
-            throw new RuntimeException("Git diff analysis failed");
+            log.error("Error analyzing git diff for project: {}",project.getTitle(), e);
+            return createEmptyDiffAnalysis(commitHash);
         }
     }
+
+    private GitDiffAnalysisDTO createEmptyDiffAnalysis(String commitHash) {
+        return GitDiffAnalysisDTO.builder()
+                .filesChanged(0)
+                .changeSummary("No changes detected or initial commit")
+                .modifiedFiles(new ArrayList<>())
+                .commitHash(commitHash)
+                .build();
+    }
+
     private AbstractTreeIterator prepareTreeParser(Repository repository, ObjectId objectId) throws IOException {
         CanonicalTreeParser treeParser = new CanonicalTreeParser();
         try (ObjectReader reader = repository.newObjectReader()) {
