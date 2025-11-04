@@ -37,7 +37,7 @@ public class ReadmeService {
         ProjectEntity project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
 
-        ReadmeFileEntity currentReadme = readmeFileRepository.findByProjectId(projectId)
+        ReadmeFileEntity currentReadme = readmeFileRepository.findLatestByProjectId(projectId)
                 .orElseThrow(() -> new RuntimeException("No README found"));
 
         // This would be the newly generated README from git push
@@ -55,11 +55,8 @@ public class ReadmeService {
         ProjectEntity project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
 
-        Optional<ReadmeFileEntity> readmeOpt = readmeFileRepository.findByProject(project); // Update the README in database with final content
-        if (readmeOpt.isEmpty()) {
-            throw new RuntimeException("No README found");
-        }
-        ReadmeFileEntity currentReadme = readmeOpt.get();
+        ReadmeFileEntity currentReadme = readmeFileRepository.findLatestByProjectId(projectId)
+                .orElseThrow(() -> new RuntimeException("No README found"));
 
         currentReadme.setContent(pushRequest.getContent());
         readmeFileRepository.save(currentReadme);
@@ -109,7 +106,14 @@ public class ReadmeService {
                         .map(r -> "ID: " + r.getId() + ", Commit: " + r.getCommitHash() + ", Created: " + r.getCreatedAt())
                         .collect(Collectors.toList()));
 
-        // Find the most recent README that's not the current one
+        Optional<ReadmeFileEntity> pendingReadme = allReadmes.stream() // Look for PENDING_* commit hashes (newly generated READMEs)
+                .filter(r -> r.getCommitHash().startsWith("PENDING_"))
+                .findFirst();
+
+        if (pendingReadme.isPresent()) {
+            return pendingReadme.get();
+        }
+        // Fallback: find most recent that's not current
         return allReadmes.stream()
                 .filter(r -> !r.getId().equals(currentReadmeId))
                 .findFirst()

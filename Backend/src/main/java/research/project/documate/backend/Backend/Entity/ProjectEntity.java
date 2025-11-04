@@ -31,19 +31,19 @@ public class ProjectEntity {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    @OneToOne(cascade = CascadeType.ALL) // Cascade - when delete project, all project related gets deleted
-    @JoinColumn(name = "readme_file_id")
-    private ReadmeFileEntity currentReadme;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "docker_file_id")
-    private DockerFileEntity currentDockerFile;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "env_example_file_id")
-    private EnvExampleFileEntity currentEnvExample;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "gitignore_file_id")
-    private GitignoreFileEntity currentGitignore;
+//    @OneToOne(cascade = CascadeType.ALL) // Cascade - when delete project, all project related gets deleted
+//    @JoinColumn(name = "readme_file_id")
+//    private ReadmeFileEntity currentReadme;
+//
+//    @OneToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "docker_file_id")
+//    private DockerFileEntity currentDockerFile;
+//
+//    @OneToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "env_example_file_id")
+//    private EnvExampleFileEntity currentEnvExample;
+//
+//    @OneToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "gitignore_file_id")
+//    private GitignoreFileEntity currentGitignore;
 }

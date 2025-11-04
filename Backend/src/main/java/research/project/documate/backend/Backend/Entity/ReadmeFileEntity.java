@@ -20,7 +20,7 @@ public class ReadmeFileEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "project_id")
     @JsonIgnore
     private ProjectEntity project;

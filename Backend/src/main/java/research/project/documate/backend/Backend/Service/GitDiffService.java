@@ -49,18 +49,36 @@ public class GitDiffService {
 
             if (currentCommit.getParentCount() == 0) {
                 log.info("No parent commit found - this might be the initial commit");
+                revWalk.close();
+                git.close();
                 return createEmptyDiffAnalysis(commitHash);
             }
-            RevCommit parentCommit = currentCommit.getParent(0);
+            //RevCommit parentCommit = currentCommit.getParent(0);
             //ObjectId previousHead = repository.resolve("HEAD~1");
+
+            RevCommit parentCommit = currentCommit.getParent(0);
+            if (parentCommit == null) {
+                log.warn("Parent commit is null");
+                revWalk.close();
+                git.close();
+                return createEmptyDiffAnalysis(commitHash);
+            }
+
+            ObjectId previousHead = parentCommit.getId();
+            if (previousHead == null) {
+                log.warn("Previous commit ID is null");
+                revWalk.close();
+                git.close();
+                return createEmptyDiffAnalysis(commitHash);
+            }
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             DiffFormatter diffFormatter = new DiffFormatter(outputStream);
             diffFormatter.setRepository(repository);
 
             List<DiffEntry> diffs = git.diff()
-                    .setOldTree(prepareTreeParser(repository, parentCommit.getTree()))
-                    .setNewTree(prepareTreeParser(repository, currentCommit.getTree()))
+                    .setOldTree(prepareTreeParser(repository, previousHead))
+                    .setNewTree(prepareTreeParser(repository, head))
                     .call();
             revWalk.close();
             git.close();

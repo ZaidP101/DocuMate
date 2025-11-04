@@ -9,7 +9,6 @@ import research.project.documate.backend.Backend.DTOs.GitDiffAnalysisDTO;
 import research.project.documate.backend.Backend.DTOs.ProjectAnalysisDTO;
 import research.project.documate.backend.Backend.DTOs.ReadmeGenerationResultDTO;
 import research.project.documate.backend.Backend.Entity.ProjectEntity;
-import research.project.documate.backend.Backend.Entity.ReadmeFileEntity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -302,15 +301,13 @@ public class ReadmeAiService {
         }
     }
 
-    public ReadmeGenerationResultDTO generateUpdatedReadme(ProjectEntity project,
-                                                           ReadmeFileEntity currentReadme,
-                                                           GitDiffAnalysisDTO diffAnalysis) {
-        String prompt = createUpdatePrompt(project, currentReadme, diffAnalysis);
+    public ReadmeGenerationResultDTO generateUpdatedReadme(ProjectEntity project, String currentContent, GitDiffAnalysisDTO diffAnalysis) {
+        String prompt = createUpdatePrompt(project, currentContent, diffAnalysis);
         String aiResponse = geminiService.generateContent(prompt);
         return processAiResponse(project, aiResponse);
     }
 
-    private String createUpdatePrompt(ProjectEntity project, ReadmeFileEntity currentReadme, GitDiffAnalysisDTO diffAnalysis) {
+    private String createUpdatePrompt(ProjectEntity project, String currentContent, GitDiffAnalysisDTO diffAnalysis) {
         return String.format("""
             Update the existing README based on recent code changes.
             
@@ -327,7 +324,7 @@ public class ReadmeAiService {
             Please provide an updated README that reflects these changes.
             Use the same JSON format as before.
             """,
-                currentReadme.getContent(),
+                currentContent,
                 diffAnalysis.getFilesChanged(),
                 diffAnalysis.getModifiedFiles(),
                 diffAnalysis.getChangeSummary(),

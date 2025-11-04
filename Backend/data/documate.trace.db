@@ -1,42 +1,21 @@
-2025-10-30 17:43:31.126267+05:30 jdbc[3]: exception
-org.h2.jdbc.JdbcSQLDataException: Value too long for column "CHANGE_SUMMARY CHARACTER VARYING(255)": "'BlogJs is a full-stack blog application built with Node.js, Express, and MongoD... (429)"; SQL statement:
-insert into readme_file_entity (change_summary,commit_hash,content,created_at,is_auto_generated,project_id,id) values (?,?,?,?,?,?,default) [22001-232]
-2025-10-31 02:01:46.485328+05:30 jdbc[105]: null
-org.h2.message.DbException: The connection was not closed by the application and is garbage collected [90018-232]
-	at org.h2.message.DbException.get(DbException.java:223)
-	at org.h2.message.DbException.get(DbException.java:199)
-	at org.h2.message.DbException.get(DbException.java:188)
-	at org.h2.jdbc.JdbcConnection.closeOld(JdbcConnection.java:217)
-	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:134)
-	at org.h2.Driver.connect(Driver.java:59)
-	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:144)
-	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:370)
-	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:207)
-	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:488)
-	at com.zaxxer.hikari.pool.HikariPool$PoolEntryCreator.call(HikariPool.java:752)
-	at com.zaxxer.hikari.pool.HikariPool$PoolEntryCreator.call(HikariPool.java:731)
-	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
-	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
-	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
-	at java.base/java.lang.Thread.run(Thread.java:833)
-Caused by: org.h2.jdbc.JdbcSQLNonTransientConnectionException: The connection was not closed by the application and is garbage collected [90018-232]
-	at org.h2.message.DbException.getJdbcSQLException(DbException.java:690)
+2025-11-05 01:09:44.193496+05:30 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Constraint "UKAOLYW1803OQXLV9RTXCVQ21CF_INDEX_6" not found; SQL statement:
+ALTER TABLE README_FILE_ENTITY DROP CONSTRAINT UKAOLYW1803OQXLV9RTXCVQ21CF_INDEX_6 [90057-232]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:644)
 	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
-	... 16 more
-2025-11-01 19:35:09.747249+05:30 jdbc[44]: exception
-org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "select * [*]form README_FILE_ENTITY"; SQL statement:
-select * form README_FILE_ENTITY [42000-232]
-2025-11-01 19:38:45.748366+05:30 jdbc[45]: null
-org.h2.message.DbException: The connection was not closed by the application and is garbage collected [90018-232]
 	at org.h2.message.DbException.get(DbException.java:223)
 	at org.h2.message.DbException.get(DbException.java:199)
-	at org.h2.message.DbException.get(DbException.java:188)
-	at org.h2.jdbc.JdbcConnection.closeOld(JdbcConnection.java:217)
-	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:134)
-	at org.h2.util.JdbcUtils.getConnection(JdbcUtils.java:291)
-	at org.h2.server.web.WebServer.getConnection(WebServer.java:811)
-	at org.h2.server.web.WebApp.login(WebApp.java:1038)
-	at org.h2.server.web.WebApp.process(WebApp.java:226)
+	at org.h2.command.ddl.AlterTableDropConstraint.update(AlterTableDropConstraint.java:51)
+	at org.h2.command.ddl.AlterTable.update(AlterTable.java:46)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:139)
+	at org.h2.command.Command.executeUpdate(Command.java:304)
+	at org.h2.command.Command.executeUpdate(Command.java:248)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:262)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:231)
+	at org.h2.server.web.WebApp.getResult(WebApp.java:1344)
+	at org.h2.server.web.WebApp.query(WebApp.java:1142)
+	at org.h2.server.web.WebApp.query(WebApp.java:1118)
+	at org.h2.server.web.WebApp.process(WebApp.java:244)
 	at org.h2.server.web.WebApp.processRequest(WebApp.java:176)
 	at org.h2.server.web.JakartaWebServlet.doGet(JakartaWebServlet.java:129)
 	at org.h2.server.web.JakartaWebServlet.doPost(JakartaWebServlet.java:166)
@@ -122,51 +101,7 @@ org.h2.message.DbException: The connection was not closed by the application and
 	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:491)
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
 	at java.base/java.lang.Thread.run(Thread.java:833)
-Caused by: org.h2.jdbc.JdbcSQLNonTransientConnectionException: The connection was not closed by the application and is garbage collected [90018-232]
-	at org.h2.message.DbException.getJdbcSQLException(DbException.java:690)
-	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
-	... 94 more
-2025-11-02 12:36:27.952789+05:30 jdbc[15]: null
-org.h2.message.DbException: The connection was not closed by the application and is garbage collected [90018-232]
-	at org.h2.message.DbException.get(DbException.java:223)
-	at org.h2.message.DbException.get(DbException.java:199)
-	at org.h2.message.DbException.get(DbException.java:188)
-	at org.h2.jdbc.JdbcConnection.closeOld(JdbcConnection.java:217)
-	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:134)
-	at org.h2.Driver.connect(Driver.java:59)
-	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:144)
-	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:370)
-	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:207)
-	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:488)
-	at com.zaxxer.hikari.pool.HikariPool$PoolEntryCreator.call(HikariPool.java:752)
-	at com.zaxxer.hikari.pool.HikariPool$PoolEntryCreator.call(HikariPool.java:731)
-	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
-	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
-	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
-	at java.base/java.lang.Thread.run(Thread.java:833)
-Caused by: org.h2.jdbc.JdbcSQLNonTransientConnectionException: The connection was not closed by the application and is garbage collected [90018-232]
-	at org.h2.message.DbException.getJdbcSQLException(DbException.java:690)
-	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
-	... 16 more
-2025-11-02 17:51:14.909343+05:30 jdbc[16]: null
-org.h2.message.DbException: The connection was not closed by the application and is garbage collected [90018-232]
-	at org.h2.message.DbException.get(DbException.java:223)
-	at org.h2.message.DbException.get(DbException.java:199)
-	at org.h2.message.DbException.get(DbException.java:188)
-	at org.h2.jdbc.JdbcConnection.closeOld(JdbcConnection.java:217)
-	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:134)
-	at org.h2.Driver.connect(Driver.java:59)
-	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:144)
-	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:370)
-	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:207)
-	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:488)
-	at com.zaxxer.hikari.pool.HikariPool$PoolEntryCreator.call(HikariPool.java:752)
-	at com.zaxxer.hikari.pool.HikariPool$PoolEntryCreator.call(HikariPool.java:731)
-	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
-	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
-	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
-	at java.base/java.lang.Thread.run(Thread.java:833)
-Caused by: org.h2.jdbc.JdbcSQLNonTransientConnectionException: The connection was not closed by the application and is garbage collected [90018-232]
-	at org.h2.message.DbException.getJdbcSQLException(DbException.java:690)
-	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
-	... 16 more
+2025-11-05 02:11:53.039758+05:30 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "select * from README_FILE_ENTITY \000d\000adelete [*]from README_FILE_ENTITY where id = 4"; SQL statement:
+select * from README_FILE_ENTITY 
+delete from README_FILE_ENTITY where id = 4 [42000-232]

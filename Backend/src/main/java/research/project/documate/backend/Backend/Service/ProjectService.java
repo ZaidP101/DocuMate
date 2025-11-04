@@ -4,10 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import research.project.documate.backend.Backend.DTOs.ProjectAnalysisDTO;
-import research.project.documate.backend.Backend.DTOs.ProjectRegistrationDTO;
-import research.project.documate.backend.Backend.DTOs.ProjectResponseDTO;
-import research.project.documate.backend.Backend.DTOs.ReadmeGenerationResultDTO;
+import research.project.documate.backend.Backend.DTOs.*;
 import research.project.documate.backend.Backend.Entity.ProjectEntity;
 import research.project.documate.backend.Backend.Entity.ReadmeFileEntity;
 import research.project.documate.backend.Backend.Repository.ProjectRepository;
@@ -80,7 +77,6 @@ public class ProjectService {
                 .changeSummary(result.getChangeSummary())
                 .createdAt(LocalDateTime.now())
                 .build();
-        project.setCurrentReadme(readmeFile);
         readmeFileRepository.save(readmeFile);
     }
 
@@ -98,9 +94,23 @@ public class ProjectService {
         projectRepository.delete(project);
     }
 
-    public ProjectEntity getProject(Long projectId) {
+    public ProjectWithReadmeDTO getProject(Long projectId) {
         ProjectEntity project = projectRepository.findById(projectId)
                 .orElseThrow(() ->new RuntimeException("Project not found with Id: "+ projectId));
-        return project;
+        List<ReadmeFileEntity> readmes = readmeFileRepository.findByProjectIdOrderByCreatedAtDesc(projectId);
+        String readmeContent = readmes.isEmpty() ? null : readmes.get(0).getContent();
+        String commitHash = readmes.isEmpty() ? null : readmes.get(0).getCommitHash();
+
+        return ProjectWithReadmeDTO.builder()
+                .id(project.getId())
+                .title(project.getTitle())
+                .gitRepoLink(project.getGitRepoLink())
+                .localPath(project.getLocalPath())
+                .template(project.getTemplate())
+                .createdAt(project.getCreatedAt())
+                .updatedAt(project.getUpdatedAt())
+                .currentReadmeContent(readmeContent)
+                .currentReadmeCommitHash(commitHash)
+                .build();
     }
 }

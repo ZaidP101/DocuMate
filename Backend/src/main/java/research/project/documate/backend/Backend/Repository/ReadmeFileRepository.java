@@ -12,11 +12,17 @@ import java.util.Optional;
 
 @Repository
 public interface ReadmeFileRepository extends JpaRepository<ReadmeFileEntity, Long> {
-    Optional<ReadmeFileEntity> findByProject(ProjectEntity project);
+
+    @Query("SELECT r FROM ReadmeFileEntity r WHERE r.project.id = :projectId ORDER BY r.createdAt DESC LIMIT 1")
+    Optional<ReadmeFileEntity> findLatestByProjectId(@Param("projectId") Long projectId);
 
     Optional<ReadmeFileEntity> findTopByProjectAndCommitHashNotOrderByCreatedAtDesc(ProjectEntity project, String initial);
-
     List<ReadmeFileEntity> findByProjectOrderByCreatedAtDesc(ProjectEntity project);
+
     @Query("SELECT r FROM ReadmeFileEntity r WHERE r.project.id = :projectId")
     Optional<ReadmeFileEntity> findByProjectId(@Param("projectId") Long projectId);
+
+    List<ReadmeFileEntity> findByProjectIdOrderByCreatedAtDesc(Long projectId);
+
+
 }

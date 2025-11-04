@@ -45,8 +45,9 @@ public class GitTriggerService {
 
             GitDiffAnalysisDTO diffAnalysis = gitDiffService.analyzeChanges(project, pushEvent.getCommitHash());
 
+            String currentContent = currentReadme.getContent();
             ReadmeGenerationResultDTO newReadme = readmeAiService.generateUpdatedReadme(
-                    project, currentReadme, diffAnalysis);
+                    project, currentContent, diffAnalysis);
 
             ReadmeFileEntity updatedReadme = ReadmeFileEntity.builder() // Save new README with pending status
                     .project(project)
