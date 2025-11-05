@@ -346,8 +346,7 @@ public class ReadmeAiService {
         return processAiResponse(project, geminiService.generateContent(fullPrompt));
     }
     private String getUserRequestPart(String enhancedPrompt) {
-        // Extract user request part from the enhanced prompt
-        if (enhancedPrompt.contains("User requested changes:")) {
+        if (enhancedPrompt.contains("User requested changes:")) { // Extract user request part from the enhanced prompt
             return enhancedPrompt.split("User requested changes:")[1].trim();
         }
         return enhancedPrompt;

@@ -42,7 +42,7 @@ public class GitHookService {
             if (!System.getProperty("os.name").toLowerCase().contains("windows")) {
                 hookPath.toFile().setExecutable(true);
             }
-            log.info("✅ Git hook installed: {} for project: {}", hookFileName, project.getTitle());
+            log.info("Git hook installed: {} for project: {}", hookFileName, project.getTitle());
         } catch (Exception e) {
             log.error("Failed to install git hook for: {}", projectPath, e);
         }

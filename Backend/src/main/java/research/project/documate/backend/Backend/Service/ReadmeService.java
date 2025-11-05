@@ -39,9 +39,14 @@ public class ReadmeService {
 
         ReadmeFileEntity currentReadme = readmeFileRepository.findLatestByProjectId(projectId)
                 .orElseThrow(() -> new RuntimeException("No README found"));
+        log.info("CURRENT README - ID: {}, Content length: {}",
+                currentReadme.getId(),
+                currentReadme.getContent() != null ? currentReadme.getContent().length() : "null");
 
-        // This would be the newly generated README from git push
-        ReadmeFileEntity newReadme = getNewlyGeneratedReadme(project, currentReadme.getId());
+        ReadmeFileEntity newReadme = getNewlyGeneratedReadme(project, currentReadme.getId()); // the newly generated README from git push
+        log.info("NEW README - ID: {}, Content length: {}",
+                newReadme.getId(),
+                newReadme.getContent() != null ? newReadme.getContent().length() : "null");
 
         return ReadmeDiffDTO.builder()
                 .oldContent(currentReadme.getContent())

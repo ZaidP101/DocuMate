@@ -5,14 +5,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
+import org.eclipse.jgit.errors.IncorrectObjectTypeException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevObject;
+import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.AbstractTreeIterator;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
+import org.eclipse.jgit.treewalk.EmptyTreeIterator;
 import org.springframework.stereotype.Service;
 import research.project.documate.backend.Backend.DTOs.GitDiffAnalysisDTO;
 import research.project.documate.backend.Backend.Entity.ProjectEntity;
@@ -90,7 +94,10 @@ public class GitDiffService {
                     .commitHash(commitHash)
                     .build();
 
-        } catch (Exception e) {
+        } catch (IncorrectObjectTypeException e) {
+            log.error("Git repository corruption detected for project: {}", project.getTitle(), e);
+            return createEmptyDiffAnalysis(commitHash); // Repair Git repo or return empty analysis
+        }catch (Exception e) {
             log.error("Error analyzing git diff for project: {}",project.getTitle(), e);
             return createEmptyDiffAnalysis(commitHash);
         }
@@ -105,12 +112,26 @@ public class GitDiffService {
                 .build();
     }
 
-    private AbstractTreeIterator prepareTreeParser(Repository repository, ObjectId objectId) throws IOException {
-        CanonicalTreeParser treeParser = new CanonicalTreeParser();
-        try (ObjectReader reader = repository.newObjectReader()) {
-            treeParser.reset(reader, objectId);
+    private AbstractTreeIterator prepareTreeParser(Repository repository, ObjectId commitId) throws IOException {
+        try (RevWalk walk = new RevWalk(repository)) {
+            RevObject obj = walk.parseAny(commitId);
+
+            if (!(obj instanceof RevCommit)) {
+                log.warn("Object {} is not a commit (found {}). Returning empty tree.", commitId.name(), obj.getClass().getSimpleName());
+                return new EmptyTreeIterator(); // Prevent crash
+            }
+
+            RevCommit commit = (RevCommit) obj;
+            RevTree tree = commit.getTree();
+
+            CanonicalTreeParser treeParser = new CanonicalTreeParser();
+            try (ObjectReader reader = repository.newObjectReader()) {
+                treeParser.reset(reader, tree);
+            }
+
+            walk.dispose();
+            return treeParser;
         }
-        return treeParser;
     }
 
     private String extractChangeSummary(List<DiffEntry> diffs) {

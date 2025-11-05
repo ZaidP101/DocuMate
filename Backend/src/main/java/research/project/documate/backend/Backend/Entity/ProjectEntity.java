@@ -1,5 +1,6 @@
 package research.project.documate.backend.Backend.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +10,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -31,19 +34,19 @@ public class ProjectEntity {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-//    @OneToOne(cascade = CascadeType.ALL) // Cascade - when delete project, all project related gets deleted
-//    @JoinColumn(name = "readme_file_id")
-//    private ReadmeFileEntity currentReadme;
-//
-//    @OneToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "docker_file_id")
-//    private DockerFileEntity currentDockerFile;
-//
-//    @OneToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "env_example_file_id")
-//    private EnvExampleFileEntity currentEnvExample;
-//
-//    @OneToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "gitignore_file_id")
-//    private GitignoreFileEntity currentGitignore;
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<ReadmeFileEntity> readmeFiles = new ArrayList<>();
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<DockerFileEntity> dockerFiles = new ArrayList<>();
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<GitignoreFileEntity> gitIgnoreFiles = new ArrayList<>();
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<EnvExampleFileEntity> envExampleFiles = new ArrayList<>();
 }
