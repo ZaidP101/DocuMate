@@ -5,11 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.springframework.stereotype.Service;
 import research.project.documate.backend.Backend.DTOs.ReadmeDiffDTO;
 import research.project.documate.backend.Backend.DTOs.ReadmeGenerationResultDTO;
 import research.project.documate.backend.Backend.DTOs.ReadmePushDTO;
 import research.project.documate.backend.Backend.DTOs.RegenerateRequestDTO;
+import research.project.documate.backend.Backend.Entity.GitCredentials;
 import research.project.documate.backend.Backend.Entity.ProjectEntity;
 import research.project.documate.backend.Backend.Entity.ReadmeFileEntity;
 import research.project.documate.backend.Backend.Repository.ProjectRepository;
@@ -32,12 +34,13 @@ public class ReadmeService {
     private final ReadmeAiService readmeAiService;
     private final ReadmeFileRepository readmeFileRepository;
     private final ProjectRepository projectRepository;
+    private final GitCredentialsService gitCredentialsService;
 
     public ReadmeDiffDTO getReadmeDiff(Long projectId) {
         ProjectEntity project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
 
-        ReadmeFileEntity currentReadme = readmeFileRepository.findLatestByProjectId(projectId)
+        ReadmeFileEntity currentReadme = readmeFileRepository.findByProjectId(projectId)
                 .orElseThrow(() -> new RuntimeException("No README found"));
         log.info("CURRENT README - ID: {}, Content length: {}",
                 currentReadme.getId(),
@@ -60,35 +63,46 @@ public class ReadmeService {
         ProjectEntity project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
 
-        ReadmeFileEntity currentReadme = readmeFileRepository.findLatestByProjectId(projectId)
-                .orElseThrow(() -> new RuntimeException("No README found"));
+        ReadmeFileEntity pendingReadme = readmeFileRepository.findByProjectIdAndCommitHashStartingWith(projectId, "PENDING_")
+                .orElseThrow(() -> new RuntimeException("No pending README found"));
 
-        currentReadme.setContent(pushRequest.getContent());
-        readmeFileRepository.save(currentReadme);
+        pendingReadme.setContent(pushRequest.getContent());
+        readmeFileRepository.save(pendingReadme);
 
         writeReadmeToFile(project, pushRequest.getContent()); // Write to actual README.md file in project folder
         executeGitCommandsWithJGit(project); // Execute Git commands
+
+        pendingReadme.setCommitHash("APPROVED_" + System.currentTimeMillis()); // Mark as approved
+        readmeFileRepository.save(pendingReadme);
+        log.info("README approved and pushed successfully for project: {}", project.getTitle());
     }
 
     private void executeGitCommandsWithJGit(ProjectEntity project) {
         try{
+            GitCredentials credentials = gitCredentialsService.getGitCredentials();
+            String decryptedToken = gitCredentialsService.getDecryptedToken();
+
             FileRepositoryBuilder builder = new FileRepositoryBuilder();
             Repository repository = builder.setGitDir(new File(project.getLocalPath(), ".git"))
                     .readEnvironment()
                     .findGitDir()
                     .build();
+
             Git git = new Git(repository);
             git.add().addFilepattern(".").call(); // add
             git.commit()                            // commit
                     .setMessage("Readme Updated -automated")
-                    .setAuthor("DocuMate", "documate@system")
+                    .setAuthor(credentials.getUsername(), credentials.getEmail())
                     .call();
-            git.push().call(); // push
+            git.push()
+                    .setCredentialsProvider(new UsernamePasswordCredentialsProvider(
+                            credentials.getUsername(), decryptedToken))
+                    .call(); // push
 
             git.close();
             log.info("JGit Completed Process Successfully ");
         } catch (Exception e) {
-            log.info("Error executing JGit commands", e);
+            log.error("Error executing JGit commands", e);
             throw new RuntimeException("JGit operation failed",e);
         }
     }

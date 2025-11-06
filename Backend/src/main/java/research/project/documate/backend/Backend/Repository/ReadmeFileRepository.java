@@ -10,6 +10,8 @@ import research.project.documate.backend.Backend.Entity.ReadmeFileEntity;
 import java.util.List;
 import java.util.Optional;
 
+import static org.apache.naming.SelectorContext.prefix;
+
 @Repository
 public interface ReadmeFileRepository extends JpaRepository<ReadmeFileEntity, Long> {
 
@@ -19,10 +21,11 @@ public interface ReadmeFileRepository extends JpaRepository<ReadmeFileEntity, Lo
     Optional<ReadmeFileEntity> findTopByProjectAndCommitHashNotOrderByCreatedAtDesc(ProjectEntity project, String initial);
     List<ReadmeFileEntity> findByProjectOrderByCreatedAtDesc(ProjectEntity project);
 
-    @Query("SELECT r FROM ReadmeFileEntity r WHERE r.project.id = :projectId")
+    @Query("SELECT r FROM ReadmeFileEntity r WHERE r.project.id = :projectId AND r.commitHash NOT LIKE 'PENDING_%' ORDER BY r.createdAt DESC LIMIT 1")
     Optional<ReadmeFileEntity> findByProjectId(@Param("projectId") Long projectId);
 
     List<ReadmeFileEntity> findByProjectIdOrderByCreatedAtDesc(Long projectId);
 
-
+    @Query("SELECT r FROM ReadmeFileEntity r WHERE r.project.id = :projectId AND r.commitHash LIKE CONCAT(:prefix, '%') ORDER BY r.createdAt DESC LIMIT 1")
+    Optional<ReadmeFileEntity> findByProjectIdAndCommitHashStartingWith(@Param("projectId") Long projectId, @Param("prefix") String prefix);
 }

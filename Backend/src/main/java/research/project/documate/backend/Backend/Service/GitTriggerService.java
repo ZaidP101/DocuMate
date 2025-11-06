@@ -48,6 +48,7 @@ public class GitTriggerService {
             String currentContent = currentReadme.getContent();
             ReadmeGenerationResultDTO newReadme = readmeAiService.generateUpdatedReadme(
                     project, currentContent, diffAnalysis);
+            log.info("the newly generated readme content is as follows : {}" + newReadme.getContent());
 
             ReadmeFileEntity updatedReadme = ReadmeFileEntity.builder() // Save new README with pending status
                     .project(project)

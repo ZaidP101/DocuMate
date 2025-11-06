@@ -29,6 +29,7 @@ public class ReadmeAiService {
 
     private ReadmeGenerationResultDTO processAiResponse(ProjectEntity project, String aiResponse) {
         try {
+            log.info("Raw AI Response: {}", aiResponse);
             ObjectMapper mapper = new ObjectMapper();
             JsonNode rootNode = mapper.readTree(aiResponse);
             JsonNode textNode = rootNode.path("candidates")
@@ -37,16 +38,20 @@ public class ReadmeAiService {
                     .path("parts")
                     .get(0)
                     .path("text");
+            log.info("Extracted text node: {}", textNode.asText());
 
             String jsonContent = textNode.asText()
                     .replaceAll("```json\\n?", "")
                     .replaceAll("\\n?```", "")
                     .trim();
-
+            log.info("Cleaned JSON content: {}", jsonContent);
             JsonNode readmeJson = mapper.readTree(jsonContent);
 
-            String readmeContent = readmeJson.path("readme_content").asText();
+            String readmeContent = readmeJson.path("README").asText();
             String changeSummary = readmeJson.path("change_summary").asText();
+            if (changeSummary.isEmpty()) {
+                changeSummary = "Updated README based on recent code changes";
+            }
             List<String> keyFeatures = extractKeyFeatures(readmeJson.path("key_features"));
             List<String> setupSteps = extractSetupSteps(readmeJson.path("setup_steps"));
 
