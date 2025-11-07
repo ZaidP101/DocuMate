@@ -1,4 +1,4 @@
-package research.project.documate.backend.Backend.DTOs;
+package research.project.documate.backend.Backend.DTOs.Project;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

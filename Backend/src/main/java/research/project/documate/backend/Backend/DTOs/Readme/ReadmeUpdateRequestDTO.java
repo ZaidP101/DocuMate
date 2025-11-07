@@ -1,4 +1,4 @@
-package research.project.documate.backend.Backend.DTOs;
+package research.project.documate.backend.Backend.DTOs.Readme;
 
 import lombok.Builder;
 import lombok.Data;

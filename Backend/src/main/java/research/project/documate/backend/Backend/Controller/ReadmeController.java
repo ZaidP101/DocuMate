@@ -4,9 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import research.project.documate.backend.Backend.DTOs.ReadmeDiffDTO;
-import research.project.documate.backend.Backend.DTOs.ReadmePushDTO;
-import research.project.documate.backend.Backend.DTOs.RegenerateRequestDTO;
+import research.project.documate.backend.Backend.DTOs.Readme.ReadmeDiffDTO;
+import research.project.documate.backend.Backend.DTOs.Readme.ReadmePushDTO;
+import research.project.documate.backend.Backend.DTOs.Readme.RegenerateRequestDTO;
 import research.project.documate.backend.Backend.Service.ReadmeService;
 
 @RestController

@@ -1,13 +1,13 @@
-package research.project.documate.backend.Backend.Service;
+package research.project.documate.backend.Backend.Service.AiService;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import research.project.documate.backend.Backend.DTOs.GitDiffAnalysisDTO;
-import research.project.documate.backend.Backend.DTOs.ProjectAnalysisDTO;
-import research.project.documate.backend.Backend.DTOs.ReadmeGenerationResultDTO;
+import research.project.documate.backend.Backend.DTOs.Readme.GitDiffAnalysisDTO;
+import research.project.documate.backend.Backend.DTOs.Project.ProjectAnalysisDTO;
+import research.project.documate.backend.Backend.DTOs.Readme.ReadmeGenerationResultDTO;
 import research.project.documate.backend.Backend.Entity.ProjectEntity;
 
 import java.util.ArrayList;

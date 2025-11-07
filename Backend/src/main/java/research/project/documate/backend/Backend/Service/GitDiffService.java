@@ -18,7 +18,7 @@ import org.eclipse.jgit.treewalk.AbstractTreeIterator;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.eclipse.jgit.treewalk.EmptyTreeIterator;
 import org.springframework.stereotype.Service;
-import research.project.documate.backend.Backend.DTOs.GitDiffAnalysisDTO;
+import research.project.documate.backend.Backend.DTOs.Readme.GitDiffAnalysisDTO;
 import research.project.documate.backend.Backend.Entity.ProjectEntity;
 
 import java.io.ByteArrayOutputStream;

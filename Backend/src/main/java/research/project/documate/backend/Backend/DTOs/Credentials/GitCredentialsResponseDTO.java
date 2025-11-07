@@ -1,4 +1,4 @@
-package research.project.documate.backend.Backend.DTOs;
+package research.project.documate.backend.Backend.DTOs.Credentials;
 
 import lombok.Builder;
 import lombok.Data;

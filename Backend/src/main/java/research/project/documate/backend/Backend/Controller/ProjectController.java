@@ -3,10 +3,9 @@ package research.project.documate.backend.Backend.Controller;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import research.project.documate.backend.Backend.DTOs.ProjectRegistrationDTO;
-import research.project.documate.backend.Backend.DTOs.ProjectResponseDTO;
-import research.project.documate.backend.Backend.DTOs.ProjectWithReadmeDTO;
-import research.project.documate.backend.Backend.Entity.ProjectEntity;
+import research.project.documate.backend.Backend.DTOs.Project.ProjectRegistrationDTO;
+import research.project.documate.backend.Backend.DTOs.Project.ProjectResponseDTO;
+import research.project.documate.backend.Backend.DTOs.Project.ProjectWithReadmeDTO;
 import research.project.documate.backend.Backend.Service.ProjectService;
 
 import java.util.List;

@@ -1,11 +1,10 @@
 package research.project.documate.backend.Backend.Service;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import research.project.documate.backend.Backend.DTOs.GitCredentialsDTO;
-import research.project.documate.backend.Backend.DTOs.GitCredentialsResponseDTO;
+import research.project.documate.backend.Backend.DTOs.Credentials.GitCredentialsDTO;
+import research.project.documate.backend.Backend.DTOs.Credentials.GitCredentialsResponseDTO;
 import research.project.documate.backend.Backend.Entity.GitCredentials;
 import research.project.documate.backend.Backend.Repository.GitCredentialsRepository;
 

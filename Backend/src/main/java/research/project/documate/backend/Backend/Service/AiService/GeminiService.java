@@ -1,4 +1,4 @@
-package research.project.documate.backend.Backend.Service;
+package research.project.documate.backend.Backend.Service.AiService;
 
 
 import org.springframework.beans.factory.annotation.Value;

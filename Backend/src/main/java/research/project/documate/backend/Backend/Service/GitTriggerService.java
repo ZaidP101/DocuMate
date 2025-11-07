@@ -3,13 +3,14 @@ package research.project.documate.backend.Backend.Service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import research.project.documate.backend.Backend.DTOs.GitDiffAnalysisDTO;
-import research.project.documate.backend.Backend.DTOs.GitPushEventDTO;
-import research.project.documate.backend.Backend.DTOs.ReadmeGenerationResultDTO;
+import research.project.documate.backend.Backend.DTOs.Readme.GitDiffAnalysisDTO;
+import research.project.documate.backend.Backend.DTOs.Readme.GitPushEventDTO;
+import research.project.documate.backend.Backend.DTOs.Readme.ReadmeGenerationResultDTO;
 import research.project.documate.backend.Backend.Entity.ProjectEntity;
 import research.project.documate.backend.Backend.Entity.ReadmeFileEntity;
 import research.project.documate.backend.Backend.Repository.ProjectRepository;
 import research.project.documate.backend.Backend.Repository.ReadmeFileRepository;
+import research.project.documate.backend.Backend.Service.AiService.ReadmeAiService;
 
 import java.time.LocalDateTime;
 

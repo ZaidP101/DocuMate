@@ -4,11 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import research.project.documate.backend.Backend.DTOs.*;
+import research.project.documate.backend.Backend.DTOs.Project.ProjectAnalysisDTO;
+import research.project.documate.backend.Backend.DTOs.Project.ProjectRegistrationDTO;
+import research.project.documate.backend.Backend.DTOs.Project.ProjectResponseDTO;
+import research.project.documate.backend.Backend.DTOs.Project.ProjectWithReadmeDTO;
+import research.project.documate.backend.Backend.DTOs.Readme.ReadmeGenerationResultDTO;
 import research.project.documate.backend.Backend.Entity.ProjectEntity;
 import research.project.documate.backend.Backend.Entity.ReadmeFileEntity;
 import research.project.documate.backend.Backend.Repository.ProjectRepository;
 import research.project.documate.backend.Backend.Repository.ReadmeFileRepository;
+import research.project.documate.backend.Backend.Service.AiService.ReadmeAiService;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

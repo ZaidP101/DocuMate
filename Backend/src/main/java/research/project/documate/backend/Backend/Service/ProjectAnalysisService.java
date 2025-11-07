@@ -3,7 +3,7 @@ package research.project.documate.backend.Backend.Service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import research.project.documate.backend.Backend.DTOs.ProjectAnalysisDTO;
+import research.project.documate.backend.Backend.DTOs.Project.ProjectAnalysisDTO;
 
 import java.io.IOException;
 import java.nio.file.Files;

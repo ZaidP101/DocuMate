@@ -1,14 +1,12 @@
-package research.project.documate.backend.Backend.DTOs;
+package research.project.documate.backend.Backend.DTOs.Project;
 
-import lombok.Builder;
 import lombok.Data;
 import research.project.documate.backend.Backend.Entity.ProjectTemplate;
 
 import java.time.LocalDateTime;
 
-@Builder
 @Data
-public class ProjectWithReadmeDTO {
+public class ProjectResponseDTO {
     private Long id;
     private String title;
     private String gitRepoLink;
@@ -16,6 +14,4 @@ public class ProjectWithReadmeDTO {
     private ProjectTemplate template;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private String currentReadmeContent;
-    private String currentReadmeCommitHash;
 }

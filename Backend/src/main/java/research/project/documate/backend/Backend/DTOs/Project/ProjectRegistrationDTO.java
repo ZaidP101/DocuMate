@@ -1,4 +1,4 @@
-package research.project.documate.backend.Backend.DTOs;
+package research.project.documate.backend.Backend.DTOs.Project;
 
 import lombok.Data;
 import research.project.documate.backend.Backend.Entity.ProjectTemplate;
