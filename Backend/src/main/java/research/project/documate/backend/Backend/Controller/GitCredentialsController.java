@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import research.project.documate.backend.Backend.DTOs.Credentials.GitCredentialsDTO;
 import research.project.documate.backend.Backend.DTOs.Credentials.GitCredentialsResponseDTO;
-import research.project.documate.backend.Backend.Service.GitCredentialsService;
+import research.project.documate.backend.Backend.Service.Support.GitCredentialsService;
 
 @RestController
 @RequestMapping("/api/git-credentials")

@@ -1,7 +1,6 @@
 package research.project.documate.backend.Backend.Service;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import research.project.documate.backend.Backend.DTOs.Docker.*;
@@ -11,6 +10,7 @@ import research.project.documate.backend.Backend.Entity.ProjectEntity;
 import research.project.documate.backend.Backend.Repository.DockerFileRepository;
 import research.project.documate.backend.Backend.Repository.ProjectRepository;
 import research.project.documate.backend.Backend.Service.AiService.DockerAiService;
+import research.project.documate.backend.Backend.Service.Support.ProjectAnalysisService;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,9 +18,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -31,15 +29,13 @@ public class DockerFileService {
     private final ProjectAnalysisService projectAnalysisService;
     private final DockerAiService dockerAiService;
 
-    // 1. Check current Dockerfile
-    public DockerFileResponseDTO getCurrentDockerFile(Long projectId) {
+    public DockerFileResponseDTO getCurrentDockerFile(Long projectId) { // 1. Check current Dockerfile
         ProjectEntity project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
 
         boolean dockerfileExists = checkDockerfileExists(project);
 
-        // Get latest (any status)
-        Optional<DockerFileEntity> dockerFileOpt = dockerFileRepository.findLatestByProjectId(projectId);
+        Optional<DockerFileEntity> dockerFileOpt = dockerFileRepository.findLatestByProjectId(projectId); // Get latest (any status)
 
         if (dockerFileOpt.isPresent()) {
             DockerFileEntity dockerFile = dockerFileOpt.get();
@@ -59,8 +55,7 @@ public class DockerFileService {
         }
     }
 
-    // 2. Generate new Dockerfile (PENDING only)
-    public DockerFileDiffDTO generateDockerFile(Long projectId) {
+    public DockerFileDiffDTO generateDockerFile(Long projectId) { // 2. Generate new Dockerfile (PENDING only)
         ProjectEntity project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
 
@@ -69,13 +64,11 @@ public class DockerFileService {
 
         DockerGenerationResultDTO newDocker = dockerAiService.generateDockerFile(project, analysis, currentContent);
 
-        // Get current approved for comparison
-        String oldContent = dockerFileRepository.findActiveByProjectId(projectId)
+        String oldContent = dockerFileRepository.findActiveByProjectId(projectId) // Get current approved for comparison
                 .map(DockerFileEntity::getContent)
                 .orElse("");
 
-        // Save as PENDING
-        DockerFileEntity pendingDocker = DockerFileEntity.builder()
+        DockerFileEntity pendingDocker = DockerFileEntity.builder() // Save as PENDING
                 .project(project)
                 .content(newDocker.getContent())
                 .commitHash("PENDING_" + System.currentTimeMillis())
@@ -92,8 +85,7 @@ public class DockerFileService {
                 .build();
     }
 
-    // 3. Get diff between approved and pending
-    public DockerFileDiffDTO getDockerFileDiff(Long projectId) {
+    public DockerFileDiffDTO getDockerFileDiff(Long projectId) { // 3. Get diff between approved and pending
         try {
             log.info("=== DOCKER DIFF DEBUG ===");
             log.info("Project ID: {}", projectId);
@@ -102,15 +94,13 @@ public class DockerFileService {
                     .orElseThrow(() -> new RuntimeException("Project not found"));
             log.info("Project found: {}", project.getTitle());
 
-            // Get approved (old)
-            Optional<DockerFileEntity> approvedOpt = dockerFileRepository.findActiveByProjectId(projectId);
+            Optional<DockerFileEntity> approvedOpt = dockerFileRepository.findActiveByProjectId(projectId); // Get approved (old)
             log.info("Approved Dockerfile present: {}", approvedOpt.isPresent());
 
             String oldContent = approvedOpt.map(DockerFileEntity::getContent).orElse("");
             log.info("Old content length: {}", oldContent.length());
 
-            // Get pending (new)
-            Optional<DockerFileEntity> pendingOpt = dockerFileRepository.findByProjectIdAndCommitHashStartingWith(projectId, "PENDING_");
+            Optional<DockerFileEntity> pendingOpt = dockerFileRepository.findByProjectIdAndCommitHashStartingWith(projectId, "PENDING_"); // Get pending (new)
             log.info("Pending Dockerfile present: {}", pendingOpt.isPresent());
 
             DockerFileEntity pendingDocker = pendingOpt
@@ -132,37 +122,31 @@ public class DockerFileService {
         }
     }
 
-    // 4. Write to file and approve
-    public String approveAndWriteDockerFile(Long projectId, DockerFilePushDTO pushRequest) {
+    public String approveAndWriteDockerFile(Long projectId, DockerFilePushDTO pushRequest) { // 4. Write to file and approve
         ProjectEntity project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
 
         DockerFileEntity pendingDocker = dockerFileRepository.findByProjectIdAndCommitHashStartingWith(projectId, "PENDING_")
                 .orElseThrow(() -> new RuntimeException("No pending Dockerfile found"));
 
-        // Update content if modified
-        pendingDocker.setContent(pushRequest.getContent());
+        pendingDocker.setContent(pushRequest.getContent()); // Update content if modified
 
-        // Write to file
-        writeDockerfileToProject(project, pushRequest.getContent());
+        writeDockerfileToProject(project, pushRequest.getContent()); // Write to file
 
-        // Mark as approved
-        pendingDocker.setCommitHash("APPROVED_" + System.currentTimeMillis());
+        pendingDocker.setCommitHash("APPROVED_" + System.currentTimeMillis()); // Mark as approved
         dockerFileRepository.save(pendingDocker);
 
         return "Dockerfile approved and written successfully";
     }
 
-    // 5. Regenerate with prompt
-    public DockerFileDiffDTO regenerateWithPrompt(Long projectId, DockerRegenerateRequestDTO request) {
+    public DockerFileDiffDTO regenerateWithPrompt(Long projectId, DockerRegenerateRequestDTO request) { // 5. Regenerate with prompt
         ProjectEntity project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Project not found"));
 
         DockerGenerationResultDTO newResult = dockerAiService.regenerateWithPrompt(
                 project, request.getCurrentContent(), request.getUserPrompt());
 
-        // Update or create pending
-        DockerFileEntity pendingDocker = dockerFileRepository.findByProjectIdAndCommitHashStartingWith(projectId, "PENDING_")
+        DockerFileEntity pendingDocker = dockerFileRepository.findByProjectIdAndCommitHashStartingWith(projectId, "PENDING_") // Update or create pending
                 .orElse(DockerFileEntity.builder()
                         .project(project)
                         .commitHash("PENDING_" + System.currentTimeMillis())
@@ -181,8 +165,7 @@ public class DockerFileService {
                 .build();
     }
 
-    // Helper methods
-    private boolean checkDockerfileExists(ProjectEntity project) {
+    private boolean checkDockerfileExists(ProjectEntity project) { // Helper methods
         try {
             return Files.exists(Paths.get(project.getLocalPath(), "Dockerfile"));
         } catch (Exception e) {

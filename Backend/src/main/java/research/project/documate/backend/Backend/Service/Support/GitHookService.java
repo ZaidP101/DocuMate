@@ -1,4 +1,4 @@
-package research.project.documate.backend.Backend.Service;
+package research.project.documate.backend.Backend.Service.Support;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import research.project.documate.backend.Backend.Entity.ProjectEntity;
 import research.project.documate.backend.Backend.Repository.ProjectRepository;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;

@@ -8,8 +8,6 @@ import research.project.documate.backend.Backend.DTOs.Docker.DockerFileDiffDTO;
 import research.project.documate.backend.Backend.DTOs.Docker.DockerFilePushDTO;
 import research.project.documate.backend.Backend.DTOs.Docker.DockerFileResponseDTO;
 import research.project.documate.backend.Backend.DTOs.Docker.DockerRegenerateRequestDTO;
-import research.project.documate.backend.Backend.Entity.DockerFileEntity;
-import research.project.documate.backend.Backend.Repository.DockerFileRepository;
 import research.project.documate.backend.Backend.Service.DockerFileService;
 
 @RestController
@@ -19,8 +17,7 @@ import research.project.documate.backend.Backend.Service.DockerFileService;
 public class DockerFileController {
     private final DockerFileService dockerFileService;
 
-    // 1. Check current
-    @GetMapping("/{projectId}")
+    @GetMapping("/{projectId}") // 1. Check current
     public ResponseEntity<DockerFileResponseDTO> getDockerFile(@PathVariable Long projectId) {
         try {
             return ResponseEntity.ok(dockerFileService.getCurrentDockerFile(projectId));
@@ -29,8 +26,7 @@ public class DockerFileController {
         }
     }
 
-    // 2. Generate new (creates PENDING)
-    @PostMapping("/{projectId}/generate")
+    @PostMapping("/{projectId}/generate") // 2. Generate new (creates PENDING)
     public ResponseEntity<DockerFileDiffDTO> generateDockerFile(@PathVariable Long projectId) {
         try {
             return ResponseEntity.ok(dockerFileService.generateDockerFile(projectId));
@@ -39,8 +35,7 @@ public class DockerFileController {
         }
     }
 
-    // 4. Approve and write
-    @PostMapping("/{projectId}/push")
+    @PostMapping("/{projectId}/push") // 4. Approve and write
     public ResponseEntity<String> pushDockerFile(@PathVariable Long projectId, @RequestBody DockerFilePushDTO pushRequest) {
         try {
             return ResponseEntity.ok(dockerFileService.approveAndWriteDockerFile(projectId, pushRequest));
@@ -49,8 +44,7 @@ public class DockerFileController {
         }
     }
 
-    // 5. Regenerate with prompt
-    @PostMapping("/{projectId}/regenerate")
+    @PostMapping("/{projectId}/regenerate") // 5. Regenerate with prompt
     public ResponseEntity<DockerFileDiffDTO> regenerateDockerFile(@PathVariable Long projectId, @RequestBody DockerRegenerateRequestDTO request) {
         try {
             return ResponseEntity.ok(dockerFileService.regenerateWithPrompt(projectId, request));

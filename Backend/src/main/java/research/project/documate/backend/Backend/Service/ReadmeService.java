@@ -17,6 +17,7 @@ import research.project.documate.backend.Backend.Entity.ReadmeFileEntity;
 import research.project.documate.backend.Backend.Repository.ProjectRepository;
 import research.project.documate.backend.Backend.Repository.ReadmeFileRepository;
 import research.project.documate.backend.Backend.Service.AiService.ReadmeAiService;
+import research.project.documate.backend.Backend.Service.Support.GitCredentialsService;
 
 import java.io.File;
 import java.io.IOException;

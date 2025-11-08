@@ -1,0 +1,174 @@
+package research.project.documate.backend.Backend.Service.AiService;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import research.project.documate.backend.Backend.DTOs.GitIgnore.GitignoreGenerationResultDTO;
+import research.project.documate.backend.Backend.DTOs.Project.ProjectAnalysisDTO;
+import research.project.documate.backend.Backend.Entity.ProjectEntity;
+
+@Service
+@Slf4j
+@AllArgsConstructor
+public class GitignoreAiService {
+    private final GeminiService geminiService;
+
+    public GitignoreGenerationResultDTO generateGitignore(ProjectEntity project, ProjectAnalysisDTO analysis, String currentContent) {
+        String prompt = createGitignorePrompt(project, analysis, currentContent);
+        String aiResponse = geminiService.generateContent(prompt);
+        return processGitignoreResponse(project, aiResponse);
+    }
+
+    public GitignoreGenerationResultDTO regenerateWithPrompt(ProjectEntity project, String currentContent, String userPrompt) {
+        String prompt = String.format("""
+            You are a Git expert. Modify the existing .gitignore file based on the user's requirements.
+            
+            IMPORTANT: Keep all the original content and structure unless specifically asked to change it.
+            Only make the changes requested by the user.
+            
+            Current .gitignore:
+            %s
+            
+            User requested changes:
+            %s
+            
+            Instructions:
+            1. Apply ONLY the changes requested by the user
+            2. Preserve all other aspects of the .gitignore file
+            3. Maintain proper .gitignore syntax and formatting
+            4. Return ONLY the complete .gitignore content without any markdown formatting or explanations
+            5. Do not wrap the response in code blocks or add any preamble
+            
+            Return the complete modified .gitignore:
+            """, currentContent, userPrompt);
+
+        String aiResponse = geminiService.generateContent(prompt);
+        return processGitignoreResponse(project, aiResponse);
+    }
+
+    private String createGitignorePrompt(ProjectEntity project, ProjectAnalysisDTO analysis, String currentContent) {
+        return String.format("""
+            Create an optimized .gitignore file for this project:
+            
+            Project: %s
+            Type: %s
+            Main Language: %s
+            Build Tool: %s
+            Architecture: %s
+            Key Files: %s
+            Dependencies: %s
+            Framework: %s
+            
+            Current .gitignore (if exists):
+            %s
+            
+            Please create a comprehensive .gitignore file with:
+            - Language-specific ignores (based on main language and framework)
+            - Build tool ignores (node_modules, target, dist, etc.)
+            - IDE and editor files (.vscode, .idea, etc.)
+            - OS-specific files (.DS_Store, Thumbs.db)
+            - Dependency directories
+            - Build outputs and cache files
+            - Environment and configuration files that should not be committed
+            - Log files and temporary files
+            
+            Return only the .gitignore content without explanations.
+            Use proper .gitignore syntax with comments for each section.
+            """,
+                project.getTitle(),
+                analysis.getProjectType(),
+                analysis.getMainLanguage(),
+                analysis.getBuildTool(),
+                analysis.getArchitectureType(),
+                analysis.getKeyFiles(),
+                analysis.getDependencies(),
+                analysis.getFileStructure(),
+                currentContent
+        );
+    }
+
+    private GitignoreGenerationResultDTO processGitignoreResponse(ProjectEntity project, String aiResponse) {
+        try {
+            log.info("Raw Gitignore AI Response: {}", aiResponse);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode rootNode = mapper.readTree(aiResponse);
+            JsonNode textNode = rootNode.path("candidates")
+                    .get(0)
+                    .path("content")
+                    .path("parts")
+                    .get(0)
+                    .path("text");
+
+            String gitignoreContent = textNode.asText()
+                    .replaceAll("```gitignore\\n?", "")
+                    .replaceAll("```\\n?", "")
+                    .replaceAll("^#.*\\n?", "")
+                    .trim();
+
+            log.info("Extracted Gitignore content: {}", gitignoreContent);
+
+            return GitignoreGenerationResultDTO.builder()
+                    .projectId(project.getId())
+                    .content(gitignoreContent)
+                    .changeSummary(".gitignore generated based on project analysis")
+                    .isAutoGenerated(true)
+                    .build();
+
+        } catch (Exception e) {
+            log.error("Error processing Gitignore AI response", e);
+            return createDefaultGitignore(project);
+        }
+    }
+
+    private GitignoreGenerationResultDTO createDefaultGitignore(ProjectEntity project) {
+        String defaultContent = """
+            # Dependencies
+            node_modules/
+            npm-debug.log*
+            yarn-debug.log*
+            yarn-error.log*
+            
+            # Build outputs
+            dist/
+            build/
+            .next/
+            out/
+            
+            # Environment variables
+            .env
+            .env.local
+            .env.development.local
+            .env.test.local
+            .env.production.local
+            
+            # Logs
+            logs
+            *.log
+            
+            # Runtime data
+            pids
+            *.pid
+            *.seed
+            *.pid.lock
+            
+            # IDE
+            .vscode/
+            .idea/
+            *.swp
+            *.swo
+            
+            # OS
+            .DS_Store
+            Thumbs.db
+            """;
+
+        return GitignoreGenerationResultDTO.builder()
+                .projectId(project.getId())
+                .content(defaultContent)
+                .changeSummary("Default .gitignore created")
+                .isAutoGenerated(true)
+                .build();
+    }
+}

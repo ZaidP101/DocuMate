@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import research.project.documate.backend.Backend.DTOs.Readme.GitPushEventDTO;
-import research.project.documate.backend.Backend.Service.GitTriggerService;
+import research.project.documate.backend.Backend.Service.Support.GitTriggerService;
 
 @RestController
 @RequestMapping("/api/git")

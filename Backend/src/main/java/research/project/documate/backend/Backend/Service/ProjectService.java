@@ -14,6 +14,8 @@ import research.project.documate.backend.Backend.Entity.ReadmeFileEntity;
 import research.project.documate.backend.Backend.Repository.ProjectRepository;
 import research.project.documate.backend.Backend.Repository.ReadmeFileRepository;
 import research.project.documate.backend.Backend.Service.AiService.ReadmeAiService;
+import research.project.documate.backend.Backend.Service.Support.GitHookService;
+import research.project.documate.backend.Backend.Service.Support.ProjectAnalysisService;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

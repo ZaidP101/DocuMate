@@ -1,4 +1,4 @@
-package research.project.documate.backend.Backend.Service;
+package research.project.documate.backend.Backend.Service.Support;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
