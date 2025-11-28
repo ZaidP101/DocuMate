@@ -33,7 +33,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: 25px;
-  justify-content: center;
   padding-bottom: 80px;
 }
 
@@ -57,4 +56,11 @@
   background: linear-gradient(135deg, #9333ea, #a855f7);
   transform: scale(1.1);
   box-shadow: 0 0 35px rgba(168, 85, 247, 0.7);
+}
+.project-subheading {
+  color: #a955f7aa;
+  font-weight: 700;
+  font-size: 14px;
+  margin-top: 5px;
+  letter-spacing: 0.5px;
 }

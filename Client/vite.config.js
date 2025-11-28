@@ -4,13 +4,12 @@ import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
-  server: {
-    port: 5173,
-  },
+
   build: {
     outDir: path.resolve(__dirname, 'dist'),
   },
   server: {
+    port: 5173,
     proxy: {
       '/api': "http://localhost:8181"
     },

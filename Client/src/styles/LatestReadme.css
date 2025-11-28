@@ -6,7 +6,7 @@
   color: #e5e7eb; 
   padding: 25px;
   border-radius: 12px;
-  width: 65%;
+  width: 75%;
   border: 1px solid #2d2d2d;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
   font-family: "Segoe UI", sans-serif;
@@ -62,7 +62,7 @@
 }
 
 .project-title {
-  font-size: 18px;
+  font-size: 35px;
   margin-bottom: 20px;
   color: #a855f7; 
   font-weight: 600;
@@ -72,18 +72,18 @@
 .button-group {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 25px;
   width: 100%;
-  margin-top: 25%;
+  margin-top: 30%;
 }
 
 .markdown-preview {
-  background: #232f3e;
-  padding: 1rem;
+  background: white;
+  padding-left:1.5rem;  
   border-radius: 8px;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.6;
-  color:white;
+  color:#232f3e;
   max-height: 99%;
   overflow-y: auto;
   width: 100%;
@@ -98,7 +98,7 @@
 
 .markdown-preview pre {
   background: #272822;
-  color: #f8f8f2;
+  color: #232f3e;
   padding: 0.75rem;
   border-radius: 6px;
   overflow-x: auto;

@@ -1,7 +1,6 @@
 .documate-loader-container {
-  height: 100vh;
-  width: 100%;
-  background-color: #0f1117; 
+  height: 50%;
+  width: 60%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -9,6 +8,9 @@
   color: #e2e8f0;
   font-family: "Segoe UI", sans-serif;
   overflow: hidden;
+  margin: auto;
+  margin-bottom: 25%;
+  margin-top: 20%;
 }
 
 .wave {
@@ -24,7 +26,7 @@
   display: block;
   width: 6px;
   height: 20px;
-  background: linear-gradient(180deg, #bd1aa7, #7d0575);
+  background: linear-gradient(180deg, #7e22ce, #a855f7);
   border-radius: 3px;
   animation: waveBounce 1.2s ease-in-out infinite;
 }

@@ -1,19 +1,44 @@
-import React, { useState } from 'react'
-import TextArea from './TextArea'
-import Input from './Input'
-import '../styles/FileCompare.css'
+import React, { useState } from 'react';
+import TextArea from './TextArea';
+import Input from './Input';
+import '../styles/FileCompare.css';
+import ReactMarkdown from 'react-markdown';
 
-function FileCompare({ FileName, isLimited, width = "60%" }) {
-    const [oldFile, setOldFile] = useState('');
-    const [newFile, setNewFile] = useState('');
+function FileCompare({ FileName, isLimited, width = "60%", oldFileData, newFileData, fileType, onSubmit, onPush }) {
     const [showPromptInput, setShowPromptInput] = useState(false);
     const [promptText, setPromptText] = useState('');
 
     const handlePromptClick = () => setShowPromptInput(true);
     const handlePromptSubmit = () => {
         console.log('Prompt submitted:', promptText);
+        if (promptText === '') {
+            setShowPromptInput(false);
+            return;
+        }
+
+        if (onSubmit) {
+            onSubmit(promptText)
+        }
         setShowPromptInput(false);
         setPromptText('');
+    };
+
+    const renderContent = (data) => {
+        if (fileType === "readme") {
+            return (
+                <div className="markdown-preview">
+                    <ReactMarkdown >{data || "No File content"}</ReactMarkdown>
+                </div>
+            );
+        }
+        return (
+            <TextArea
+                className="textarea-animate"
+                placeholder="No File content"
+                value={data || ""}
+                readOnly
+            />
+        );
     };
 
     return (
@@ -21,12 +46,7 @@ function FileCompare({ FileName, isLimited, width = "60%" }) {
             <div className="file-section" style={{ width }}>
                 <div className="old-file">
                     <h3>{FileName}</h3>
-                    <TextArea
-                        placeholder="Old file content"
-                        value={oldFile}
-                        onChange={(e) => setOldFile(e.target.value)}
-                        readOnly={true}
-                    />
+                    {renderContent(oldFileData)}
                 </div>
 
                 {!isLimited && (
@@ -34,11 +54,7 @@ function FileCompare({ FileName, isLimited, width = "60%" }) {
                         <div className="divider"></div>
                         <div className="new-file">
                             <h3>New {FileName}</h3>
-                            <TextArea
-                                placeholder="New file content"
-                                value={newFile}
-                                onChange={(e) => setNewFile(e.target.value)}
-                            />
+                            {renderContent(newFileData)}
 
                             <div className="btn-grp">
                                 {!showPromptInput ? (
@@ -46,7 +62,7 @@ function FileCompare({ FileName, isLimited, width = "60%" }) {
                                         <button className="btn" onClick={handlePromptClick}>
                                             Prompt
                                         </button>
-                                        <button className="btn">Push</button>
+                                        <button className="btn" onClick={onPush} >Push</button>
                                     </>
                                 ) : (
                                     <div className="prompt-input-container">

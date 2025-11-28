@@ -129,3 +129,14 @@
     display: none;
   }
 }
+
+
+.card .links,
+.card .links a {
+  word-break: break-all;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  display: inline-block;
+}
+
+

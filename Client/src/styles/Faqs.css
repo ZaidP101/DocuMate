@@ -1,0 +1,118 @@
+.faqs-container {
+  color: #ffffff;
+  background: radial-gradient(circle at top left, #1d1d1f, #0b0b0e 70%);
+  min-height: 100vh;
+  padding: 60px 100px;
+  font-family: "Segoe UI", sans-serif;
+  overflow-x: hidden;
+  animation: fadeIn 1s ease forwards;
+}
+
+
+.faqs-title {
+  text-align: center;
+  font-size: 2.8rem;
+  letter-spacing: 1px;
+  margin-bottom: 50px;
+  text-transform: uppercase;
+  animation: glow 2s ease-in-out infinite alternate;
+  position: relative;
+}
+
+.faqs-title::after {
+  content: "";
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 3px;
+  background: linear-gradient(90deg, #d408d4, #8a2be2);
+  border-radius: 2px;
+  box-shadow: 0 0 10px rgba(212, 8, 212, 0.4);
+}
+
+
+.faq-item {
+  background: linear-gradient(145deg, rgba(25, 25, 30, 0.95), rgba(20, 20, 25, 0.85));
+  border: 1px solid rgba(212, 8, 212, 0.12);
+  border-radius: 14px;
+  margin-bottom: 20px;
+  padding: 25px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+  transition: all 0.4s ease;
+  backdrop-filter: blur(8px);
+}
+
+.faq-item:hover {
+  transform: translateY(-4px);
+  border-color: rgba(212, 8, 212, 0.25);
+  box-shadow: 0 6px 20px rgba(212, 8, 212, 0.25);
+  background: linear-gradient(145deg, rgba(28, 28, 33, 0.95), rgba(25, 25, 30, 0.85));
+}
+
+
+.faq-question {
+  font-size: 1.25rem;
+  color: #c084f5;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  position: relative;
+}
+
+.faq-question::after {
+  content: "+";
+  position: absolute;
+  right: 0;
+  font-size: 1.5rem;
+  color: #a05fe6;
+  transition: transform 0.3s ease;
+}
+
+.faq-item.active .faq-question::after {
+  content: "-";
+  transform: rotate(180deg);
+}
+
+
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  color: #cfcfcf;
+  transition: max-height 0.5s ease, opacity 0.5s ease;
+  margin-top: 10px;
+  line-height: 1.6;
+  opacity: 0;
+}
+
+.faq-item.active .faq-answer {
+  max-height: 400px;
+  opacity: 1;
+}
+
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #8a2be2, #d408d4);
+  border-radius: 10px;
+}
+
+
+@keyframes glow {
+  from {
+    text-shadow: 0 0 10px rgba(212, 8, 212, 0.25),
+                 0 0 20px rgba(138, 43, 226, 0.15);
+  }
+  to {
+    text-shadow: 0 0 20px rgba(212, 8, 212, 0.5),
+                 0 0 35px rgba(138, 43, 226, 0.3);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

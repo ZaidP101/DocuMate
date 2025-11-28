@@ -9,7 +9,8 @@ function Input({
     onChange,
     placeholder,
     className = "",
-    icon
+    icon,
+    onKeyDown
 
 }) {
     return (
@@ -25,9 +26,10 @@ function Input({
                     name={name}
                     value={value}
                     onChange={onChange}
+                    onKeyDown={onKeyDown}
                     placeholder={placeholder}
                     className={`input-field ${icon ? 'with-icon' : ''}`}
-
+                    required
 
                 />
             </div>

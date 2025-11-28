@@ -63,7 +63,7 @@
 }
 
 .btn {
-  background: rgba(212, 8, 212, 0.2);
+  background:purple;
   border: 1px solid rgba(212, 8, 212, 0.4);
   color: #e0e0e0;
   padding: 8px 18px;
@@ -75,7 +75,7 @@
 }
 
 .btn:hover {
-  background: rgba(212, 8, 212, 0.4);
+  background: rgb(166, 53, 184);
   box-shadow: 0 0 10px rgba(212, 8, 212, 0.5);
   transform: translateY(-2px);
 }
@@ -116,4 +116,53 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.textarea-animate {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: slideUpFadeIn 0.5s ease forwards;
+}
+
+@keyframes slideUpFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.markdown-preview {
+  background: white;
+  padding-left:1.5rem;  
+  border-radius: 8px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color:#232f3e;
+  max-height: 99%;
+  overflow-y: auto;
+  width: 100%;
+}
+
+.markdown-preview h1,
+.markdown-preview h2,
+.markdown-preview h3 {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 0.3rem;
+}
+
+.markdown-preview pre {
+  background: #272822;
+  color: #232f3e;
+  padding: 0.75rem;
+  border-radius: 6px;
+  overflow-x: auto;
+}
+
+.markdown-preview code {
+  background: #f3f3f3;
+  padding: 2px 5px;
+  border-radius: 4px;
 }

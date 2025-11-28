@@ -2,9 +2,10 @@ import React from "react";
 import '../styles/EnvComparison.css'
 import Navbar from "../components/Navbar";
 import SideBar from "../components/SideBar";
-import AboutComponent from "../components/AboutComponent";
+import FaqComponent from "../components/FaqComponent";
 
-function About() {
+
+function Faqs() {
     return (
         <>
             <div>
@@ -15,7 +16,7 @@ function About() {
                         <SideBar />
                     </div>
                     <div className="project-section-container">
-                        <AboutComponent />
+                        <FaqComponent />
 
                     </div>
 
@@ -27,4 +28,4 @@ function About() {
     );
 }
 
-export default About;
+export default Faqs;

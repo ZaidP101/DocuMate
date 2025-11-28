@@ -6,10 +6,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
 import { UserPen } from "lucide-react";
+import Loader from "../components/Loader";
 
-function LatestReadMe({ title }) {
+function LatestReadMe() {
   const navigate = useNavigate();
-  const [currentReadme, setCurrentReadme] = useState({});
+  const [currentReadme, setCurrentReadme] = useState("");
+  const [projectTitle, setProjectTitle] = useState("")
+  const [loading, setLoading] = useState(false)
   const { id } = useParams();
 
   useEffect(() => {
@@ -18,44 +21,60 @@ function LatestReadMe({ title }) {
   console.log(id);
   const fetchReadme = async (id) => {
     try {
+      setLoading(true)
       const res = await axios.get(`/api/projects/${id}`);
       setCurrentReadme(
-        res.data.currentReadme || { content: "No README content found" }
+        res.data?.currentReadmeContent?.toString() || "No README content found"
       );
-      console.log(currentReadme);
+      setProjectTitle(res.data.title)
+      console.log("CurrentReadme:", currentReadme);
     } catch (error) {
       console.log(error);
+      setLoading(false)
+    }
+    finally {
+      setLoading(false)
     }
   };
 
   const handleEnvClick = () => navigate("/editenv");
   const handleDockerClick = () => navigate("/editdocker");
   const handleGitClick = () => navigate("/editgit");
+  const handleReadmeClick = () => navigate("/editreadme")
 
   return (
     <div className="project-editor-container">
-      <div className="readme-section">
-        <h3 className="section-title">Latest Readme (view)</h3>
-
-        {currentReadme ? (
-          <div className="markdown-preview">
-            <ReactMarkdown>{currentReadme?.content}</ReactMarkdown>
-          </div>
+      {
+        loading ? (
+          <Loader />
         ) : (
-          <p>Loading README content...</p>
-        )}
-      </div>
+          <>
+            <div className="readme-section">
+              <h3 className="section-title">Latest Readme (view)</h3>
 
-      <div id="divider"></div>
+              {currentReadme ? (
+                <div className="markdown-preview">
+                  <ReactMarkdown>{currentReadme}</ReactMarkdown>
+                </div>
+              ) : (
+                <p>Loading README content...</p>
+              )}
+            </div>
 
-      <div className="edit-section">
-        <h3 className="project-title">{currentReadme?.title}</h3>
-        <div className="button-group">
-          <Button text="Edit or create Docker" onClick={handleDockerClick} />
-          <Button text="Edit or create .env.example" onClick={handleEnvClick} />
-          <Button text="Edit or create .gitignore" onClick={handleGitClick} />
-        </div>
-      </div>
+            <div id="divider"></div>
+
+            <div className="edit-section">
+              <h3 className="project-title">{projectTitle}</h3>
+              <div className="button-group">
+                <Button text="Edit or create Docker" onClick={handleDockerClick} />
+                <Button text="Edit or create .env.example" onClick={handleEnvClick} />
+                <Button text="Edit or create readme file" onClick={handleReadmeClick} />
+                <Button text="Edit or create .gitignore" onClick={handleGitClick} />
+              </div>
+            </div>
+          </>
+        )
+      }
     </div>
   );
 }
