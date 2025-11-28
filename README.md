@@ -49,9 +49,9 @@ No disruption to developer workflow
 
 ```bash
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│   Frontend      │    │   Spring Boot    │    │   PostgreSQL    │
-│   (React/       │◄──►│   Backend        │◄──►│   Database      │
-│   JavaFX)       │    │                  │    │                 │
+│   Frontend      │    │   Spring Boot    │    │   H2            │
+│   (React)       │◄──►│   Backend        │◄──►│   Database      │
+│                 │    │                  │    │                 │
 └─────────────────┘    └──────────────────┘    └─────────────────┘
          │                       │                       │
          │                       │                       │
@@ -67,9 +67,9 @@ No disruption to developer workflow
 | File Type | Features | Auto-Update |
 |-----------|----------|-------------|
 | README.md | Project overview, installation, usage, API docs | On Git push |
-| Dockerfile | Multi-stage builds, security, optimization | On Git push |
-| .env.example | Environment variables, configuration templates | On dependency changes |
-| .gitignore | Technology-specific patterns, custom rules | On project type changes |
+| Dockerfile | Multi-stage builds, security, optimization | On project changes |
+| .env.example | Environment variables, configuration templates | On project changes |
+| .gitignore | Technology-specific patterns, custom rules | On project changes |
 
 ## Tech Stack
 
@@ -84,7 +84,7 @@ No disruption to developer workflow
 
 ### Prerequisites
 - Java 17 or higher
-- PostgreSQL 12+
+- H2 Database
 - Git
 - Google Gemini API key
 

@@ -30,30 +30,30 @@ public class ReadmeAiService {
     private ReadmeGenerationResultDTO processAiResponse(ProjectEntity project, String aiResponse) {
         try {
             log.info("Raw AI Response: {}", aiResponse);
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode rootNode = mapper.readTree(aiResponse);
-            JsonNode textNode = rootNode.path("candidates")
-                    .get(0)
-                    .path("content")
-                    .path("parts")
-                    .get(0)
-                    .path("text");
-            log.info("Extracted text node: {}", textNode.asText());
+            // Extract JSON from the response
+            String jsonContent = extractJsonFromResponse(aiResponse);
+            log.info("Extracted JSON content: {}", jsonContent);
 
-            String jsonContent = textNode.asText()
-                    .replaceAll("```json\\n?", "")
-                    .replaceAll("\\n?```", "")
-                    .trim();
-            log.info("Cleaned JSON content: {}", jsonContent);
+            if (jsonContent == null || jsonContent.trim().isEmpty()) {
+                log.warn("No JSON content found in AI response, using default README");
+                return createDefaultReadme(project);
+            }
+
+            ObjectMapper mapper = new ObjectMapper();
             JsonNode readmeJson = mapper.readTree(jsonContent);
 
-            String readmeContent = readmeJson.path("README").asText();
-            String changeSummary = readmeJson.path("change_summary").asText();
-            if (changeSummary.isEmpty()) {
-                changeSummary = "Updated README based on recent code changes";
+            // FLEXIBLE FIELD EXTRACTION - CHANGES START HERE
+            String readmeContent = extractReadmeContent(readmeJson);
+            String changeSummary = extractChangeSummary(readmeJson);
+
+            if (readmeContent == null || readmeContent.trim().isEmpty()) {
+                log.warn("Empty readme content in AI response, using default");
+                return createDefaultReadme(project);
             }
-            List<String> keyFeatures = extractKeyFeatures(readmeJson.path("key_features"));
-            List<String> setupSteps = extractSetupSteps(readmeJson.path("setup_steps"));
+
+            List<String> keyFeatures = extractKeyFeatures(readmeJson);
+            List<String> setupSteps = extractSetupSteps(readmeJson);
+            // FLEXIBLE FIELD EXTRACTION - CHANGES END HERE
 
             return ReadmeGenerationResultDTO.builder()
                     .projectId(project.getId())
@@ -65,9 +65,115 @@ public class ReadmeAiService {
                     .build();
 
         } catch (Exception e) {
-            log.error("Error processing AI response", e);
+            log.error("Error processing AI response: {}", e.getMessage(), e);
+            log.info("Falling back to default README due to parsing error");
             return createDefaultReadme(project);
         }
+    }
+
+    private String extractReadmeContent(JsonNode readmeJson) {
+        // Try different possible field names for readme content
+        String[] possibleFields = {"readme_content", "readme", "content", "markdown", "readmeContent"};
+
+        for (String field : possibleFields) {
+            if (readmeJson.has(field)) {
+                String content = readmeJson.path(field).asText();
+                if (content != null && !content.trim().isEmpty()) {
+                    log.info("Found readme content in field: '{}'", field);
+                    return content;
+                }
+            }
+        }
+
+        // If no specific field found, check if the root is a string (direct markdown)
+        if (readmeJson.isTextual()) {
+            return readmeJson.asText();
+        }
+
+        return null;
+    }
+
+    private String extractChangeSummary(JsonNode readmeJson) {
+        // Try different possible field names for change summary
+        String[] possibleFields = {"change_summary", "changeSummary", "summary", "changes", "description"};
+
+        for (String field : possibleFields) {
+            if (readmeJson.has(field)) {
+                String summary = readmeJson.path(field).asText();
+                if (summary != null && !summary.trim().isEmpty()) {
+                    log.info("Found change summary in field: '{}'", field);
+                    return summary;
+                }
+            }
+        }
+
+        return "Updated README based on recent code changes";
+    }
+
+    private String extractJsonFromResponse(String aiResponse) {
+        try {
+            //parse the entire response as JSON first
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode rootNode = mapper.readTree(aiResponse);
+            //If it's the full Gemini response structure
+            if (rootNode.has("candidates")) {
+                JsonNode textNode = rootNode.path("candidates")
+                        .get(0)
+                        .path("content")
+                        .path("parts")
+                        .get(0)
+                        .path("text");
+                String textContent = textNode.asText();
+                return extractJsonFromText(textContent);
+            }
+
+            return aiResponse; // If it's already the JSON we need
+
+        } catch (Exception e) {
+            log.info("Full response is not JSON, trying to extract JSON from text");
+            return extractJsonFromText(aiResponse);
+        }
+    }
+
+    private String extractJsonFromText(String textContent) {
+        if (textContent == null) {
+            return null;
+        }
+
+        String cleaned = textContent // Remove code block markers
+                .replaceAll("```json\\n?", "")
+                .replaceAll("\\n?```", "")
+                .replaceAll("```\\n?", "")
+                .trim();
+
+        log.info("Cleaned text content: {}", cleaned);
+
+        int startBrace = cleaned.indexOf('{'); // Try to find JSON object boundaries
+        int lastBrace = cleaned.lastIndexOf('}');
+
+        if (startBrace != -1 && lastBrace != -1 && lastBrace > startBrace) {
+            String jsonCandidate = cleaned.substring(startBrace, lastBrace + 1);
+            log.info("Extracted JSON candidate: {}", jsonCandidate);
+
+            try { // Validate it's proper JSON
+                ObjectMapper mapper = new ObjectMapper();
+                mapper.readTree(jsonCandidate);
+                return jsonCandidate;
+            } catch (Exception e) {
+                log.warn("Extracted text is not valid JSON: {}", e.getMessage());
+            }
+        }
+
+        log.info("No JSON structure found, treating as markdown content"); // If no JSON found, return the cleaned text as markdown content
+        return "{\"readme_content\": \"" + escapeJson(cleaned) + "\", \"change_summary\": \"AI generated README\"}";
+    }
+
+    private String escapeJson(String text) {
+        return text.replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r")
+                .replace("\t", "\\t");
     }
 
     private ReadmeGenerationResultDTO createDefaultReadme(ProjectEntity project) {
@@ -89,24 +195,40 @@ public class ReadmeAiService {
                 .build();
     }
 
-    private List<String> extractKeyFeatures(JsonNode featuresNode) {
-        List<String> features = new ArrayList<>();
-        if (featuresNode.isArray()) {
-            featuresNode.forEach(feature -> features.add(feature.asText()));
+    private List<String> extractKeyFeatures(JsonNode readmeJson) {
+        // Try different possible field names for key features
+        String[] possibleFields = {"key_features", "keyFeatures", "features", "key_points"};
+
+        for (String field : possibleFields) {
+            if (readmeJson.has(field) && readmeJson.path(field).isArray()) {
+                List<String> features = new ArrayList<>();
+                readmeJson.path(field).forEach(feature -> features.add(feature.asText()));
+                if (!features.isEmpty()) {
+                    log.info("Found key features in field: '{}'", field);
+                    return features;
+                }
+            }
         }
-        return features.isEmpty() ?
-                Arrays.asList("Key features will be added here") :
-                features;
+
+        return Arrays.asList("Key features will be added here");
     }
 
-    private List<String> extractSetupSteps(JsonNode stepsNode) {
-        List<String> steps = new ArrayList<>();
-        if (stepsNode.isArray()) {
-            stepsNode.forEach(step -> steps.add(step.asText()));
+    private List<String> extractSetupSteps(JsonNode readmeJson) {
+        // Try different possible field names for setup steps
+        String[] possibleFields = {"setup_steps", "setupSteps", "installation", "setup", "steps"};
+
+        for (String field : possibleFields) {
+            if (readmeJson.has(field) && readmeJson.path(field).isArray()) {
+                List<String> steps = new ArrayList<>();
+                readmeJson.path(field).forEach(step -> steps.add(step.asText()));
+                if (!steps.isEmpty()) {
+                    log.info("Found setup steps in field: '{}'", field);
+                    return steps;
+                }
+            }
         }
-        return steps.isEmpty() ?
-                Arrays.asList("Setup steps will be added here") :
-                steps;
+
+        return Arrays.asList("Setup steps will be added here");
     }
 
     private String createDomainSpecificPrompt(ProjectEntity project, ProjectAnalysisDTO analysis) {
@@ -314,20 +436,27 @@ public class ReadmeAiService {
 
     private String createUpdatePrompt(ProjectEntity project, String currentContent, GitDiffAnalysisDTO diffAnalysis) {
         return String.format("""
-            Update the existing README based on recent code changes.
+            You are a technical writer. Update the existing README based on recent code changes.
             
-            Current README:
+            CURRENT README CONTENT:
             %s
             
-            Recent Changes:
+            RECENT CODE CHANGES:
             - Files changed: %d
             - Modified files: %s
             - Change summary: %s
             
-            Project: %s (%s)
+            PROJECT: %s (%s)
             
-            Please provide an updated README that reflects these changes.
-            Use the same JSON format as before.
+            IMPORTANT: Return your response in EXACTLY this JSON format:
+            {
+                "readme_content": "Full updated README content in markdown format",
+                "change_summary": "Brief description of what changed",
+                "key_features": ["feature1", "feature2"],
+                "setup_steps": ["step1", "step2"]
+            }
+            
+            Do NOT include any other text outside this JSON structure.
             """,
                 currentContent,
                 diffAnalysis.getFilesChanged(),

@@ -25,37 +25,44 @@ public class GitHookService {
                     .orElseThrow(() -> new RuntimeException("Project not found for path: " + projectPath));
 
             String hookFileName;
+            String hookScript;
+
             if (System.getProperty("os.name").toLowerCase().contains("windows")) {
-                hookFileName = "post-push.bat";  // Add .bat extension for Windows
+                hookFileName = "post-commit.bat";  // Use post-commit instead of post-push
+                hookScript = createWindowsHookScript(project.getId(), projectPath);
                 log.info("Detected Windows OS, creating .bat hook file");
             } else {
-                hookFileName = "post-push";  // No extension for Unix
+                hookFileName = "post-commit";  // Use post-commit for Unix
+                hookScript = createUnixHookScript(project.getId(), projectPath);
                 log.info("Detected Unix/Linux OS, creating standard hook file");
             }
 
             Path hookPath = Paths.get(projectPath, ".git", "hooks", hookFileName);
-
-            String hookScript = createWindowsHookScript(project.getId(), projectPath);
             Files.write(hookPath, hookScript.getBytes(StandardCharsets.UTF_8));
 
             if (!System.getProperty("os.name").toLowerCase().contains("windows")) {
                 hookPath.toFile().setExecutable(true);
             }
-            log.info("Git hook installed: {} for project: {}", hookFileName, project.getTitle());
+
+            log.info("Git hook installed successfully: {} for project: {}", hookPath, project.getTitle());
         } catch (Exception e) {
             log.error("Failed to install git hook for: {}", projectPath, e);
         }
     }
 
     private String createWindowsHookScript(Long projectId, String projectPath) {
+        // Fixed Windows batch script
         return """
             @echo off
-            echo DocuMate: Git push detected, triggering README update...
+            echo DocuMate: Git commit detected, triggering README update...
+            
+            REM Get the latest commit hash
+            for /f "delimiter=" %%H in ('git rev-parse HEAD') do set COMMIT_HASH=%%H
+            
             curl -X POST http://localhost:8181/api/git/push-trigger ^
                  -H "Content-Type: application/json" ^
-                 -d "{\\"projectId\\":%d,\\"projectPath\\":\\"%s\\",\\"commitHash\\":\\"%%1\\"}" ^
-                 --connect-timeout 10 ^
-                 --max-time 30
+                 -d "{\\"projectId\\":%d,\\"projectPath\\":\\"%s\\",\\"commitHash\\":\\"%%COMMIT_HASH%%\\"}"
+            
             if errorlevel 1 (
                 echo DocuMate: Error triggering README update
             ) else (
@@ -66,14 +73,16 @@ public class GitHookService {
 
     private String createUnixHookScript(Long projectId, String projectPath) {
         return """
-            #!/bin/sh
-            echo "DocuMate: Git push detected, triggering README update..."
+            #!/bin/bash
+            echo "DocuMate: Git commit detected, triggering README update..."
+            
+            COMMIT_HASH=$(git rev-parse HEAD)
+            
             curl -X POST http://localhost:8181/api/git/push-trigger \\
                  -H "Content-Type: application/json" \\
-                 -d "{\\"projectId\\":%d,\\"projectPath\\":\\"$(pwd)\\",\\"commitHash\\":\\"$1\\"}" \\
-                 --connect-timeout 10 \\
-                 --max-time 30
-            echo "DocuMate: README update triggered"
-            """.formatted(projectId);
+                 -d "{\\"projectId\\":%d,\\"projectPath\\":\\"%s\\",\\"commitHash\\":\\"$COMMIT_HASH\\"}"
+            
+            echo "DocuMate: README update triggered for commit: $COMMIT_HASH"
+            """.formatted(projectId, projectPath);
     }
 }
