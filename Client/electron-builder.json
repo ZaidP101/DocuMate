@@ -2,7 +2,8 @@
   "appId": "com.documate.app",
   "productName": "DocuMate",
   "directories": {
-    "output": "../dist"
+    "output": "../dist",
+    "app": "."
   },
   "files": [
     "**/*",

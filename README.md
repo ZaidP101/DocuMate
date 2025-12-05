@@ -2,19 +2,6 @@
 
 DocuMate is an intelligent documentation automation platform that generates and maintains essential project files like READMEs, Dockerfiles, .env examples, and .gitignore files automatically. It analyzes your codebase, detects changes through Git operations, and provides AI-powered suggestions to keep your documentation always in sync with your code.
 
-## Quick Start
-
-### Download & Install
-1. **Download** the latest installer from [Releases](https://github.com/yourusername/DocuMate/releases)
-2. **Run** `DocuMate Setup 1.0.0.exe`
-3. **Launch** from Start Menu → DocuMate
-
-### First Use
-1. Open DocuMate app
-2. Register your Git project
-3. Make a code change and commit
-4. DocuMate auto-opens with updated README!
-
 ## Key Features
 
 **Smart README Generation**
@@ -101,8 +88,9 @@ No disruption to developer workflow
 
 ## Installation
 
-### Option 1: Desktop App (Recommended)
-Download `DocuMate Setup 1.0.0.exe` from [Releases](https://github.com/yourusername/DocuMate/releases) and install.
+### Option 1: Desktop App 
+Download the installer from the [Download/](https://github.com/ZaidP101/DocuMate/tree/main/Download) folder:
+- [DocuMate Setup 1.0.0.exe](https://github.com/ZaidP101/DocuMate/raw/main/Download/DocuMate%20Setup%201.0.0.exe)
 
 ### Option 2: Development Setup
 ```bash
@@ -111,16 +99,16 @@ git clone https://github.com/yourusername/DocuMate.git
 cd DocuMate
 
 # Backend
-cd backend
+cd Backend
 mvn clean package -DskipTests
 
 # Frontend
 cd ../Client
 npm install
 npm run build
+npm run package
 
-# Run in development
-npm run dev:electron
+# Installer is now at: dist/DocuMate Setup 1.0.0.exe
 ```
 
 ## Prerequisites
