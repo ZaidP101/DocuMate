@@ -51,24 +51,24 @@ public class GitHookService {
     }
 
     private String createWindowsHookScript(Long projectId, String projectPath) {
-        // Fixed Windows batch script
         return """
-            @echo off
-            echo DocuMate: Git commit detected, triggering README update...
-            
-            REM Get the latest commit hash
-            for /f "delimiter=" %%H in ('git rev-parse HEAD') do set COMMIT_HASH=%%H
-            
-            curl -X POST http://localhost:8181/api/git/push-trigger ^
-                 -H "Content-Type: application/json" ^
-                 -d "{\\"projectId\\":%d,\\"projectPath\\":\\"%s\\",\\"commitHash\\":\\"%%COMMIT_HASH%%\\"}"
-            
-            if errorlevel 1 (
-                echo DocuMate: Error triggering README update
-            ) else (
-                echo DocuMate: README update triggered successfully
-            )
-            """.formatted(projectId, projectPath.replace("\\", "\\\\"));
+        @echo off
+        echo DocuMate: Git commit detected...
+        
+        REM Get commit hash
+        for /f "delimiter=" %%H in ('git rev-parse HEAD') do set COMMIT_HASH=%%H
+        
+        REM Trigger backend update
+        curl -X POST http://localhost:8181/api/git/push-trigger ^
+             -H "Content-Type: application/json" ^
+             -d "{\\"projectId\\":%d,\\"projectPath\\":\\"%s\\",\\"commitHash\\":\\"%%COMMIT_HASH%%\\"}"
+        
+        REM Launch installed DocuMate
+        timeout /t 2 /nobreak > nul
+        start "" "%ProgramFiles%\\DocuMate\\DocuMate.exe"
+        
+        echo DocuMate launched for review!
+        """.formatted(projectId, projectPath.replace("\\", "\\\\"));
     }
 
     private String createUnixHookScript(Long projectId, String projectPath) {

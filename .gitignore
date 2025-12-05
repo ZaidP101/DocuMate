@@ -1,0 +1,22 @@
+# Distribution
+dist/
+dist/**/*
+!dist/.gitkeep
+
+# Build artifacts
+backend/target/
+backend.jar
+Client/node_modules/
+Client/dist/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Logs
+*.log

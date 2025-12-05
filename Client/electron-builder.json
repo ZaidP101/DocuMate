@@ -1,0 +1,42 @@
+{
+  "appId": "com.documate.app",
+  "productName": "DocuMate",
+  "directories": {
+    "output": "../dist"
+  },
+  "files": [
+    "**/*",
+    "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
+    "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
+    "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}",
+    "!.editorconfig",
+    "!**/._*",
+    "!electron-builder.json"
+  ],
+  "extraResources": [
+    {
+      "from": "../backend.jar",
+      "to": "backend.jar"
+    }
+  ],
+  "win": {
+    "target": "nsis",
+    "icon": "public/DocuMate.ico"
+  },
+  "mac": {
+    "target": "dmg",
+    "icon": "public/DocuMate.icns"
+  },
+  "linux": {
+    "target": "AppImage",
+    "icon": "public/DocuMate.png"
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true,
+    "installerIcon": "public/DocuMate.ico",
+    "uninstallerIcon": "public/DocuMate.ico"
+  }
+}

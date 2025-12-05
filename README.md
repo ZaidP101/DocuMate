@@ -2,6 +2,19 @@
 
 DocuMate is an intelligent documentation automation platform that generates and maintains essential project files like READMEs, Dockerfiles, .env examples, and .gitignore files automatically. It analyzes your codebase, detects changes through Git operations, and provides AI-powered suggestions to keep your documentation always in sync with your code.
 
+## Quick Start
+
+### Download & Install
+1. **Download** the latest installer from [Releases](https://github.com/yourusername/DocuMate/releases)
+2. **Run** `DocuMate Setup 1.0.0.exe`
+3. **Launch** from Start Menu → DocuMate
+
+### First Use
+1. Open DocuMate app
+2. Register your Git project
+3. Make a code change and commit
+4. DocuMate auto-opens with updated README!
+
 ## Key Features
 
 **Smart README Generation**
@@ -35,6 +48,12 @@ Automatic triggers on git push operations
 Real-time diff analysis of code changes
 Seamless integration with existing workflows
 No disruption to developer workflow
+
+## Desktop Application
+- Standalone Electron.js desktop app
+- No separate backend/frontend setup needed
+- Professional installer with custom branding
+- Auto-launches on Git commits
 
 ## How It Works
 
@@ -80,24 +99,35 @@ No disruption to developer workflow
 - File Processing: Java NIO for filesystem operations
 - API: RESTful endpoints for all operations
 
-## Installation & Setup
+## Installation
 
-### Prerequisites
-- Java 17 or higher
-- H2 Database
-- Git
-- Google Gemini API key
+### Option 1: Desktop App (Recommended)
+Download `DocuMate Setup 1.0.0.exe` from [Releases](https://github.com/yourusername/DocuMate/releases) and install.
 
-### Quick Start
-
-1. Clone & Build:
+### Option 2: Development Setup
 ```bash
-git clone https://github.com/your-org/documate.git
-cd documate
-./mvnw clean install
+# Clone repository
+git clone https://github.com/yourusername/DocuMate.git
+cd DocuMate
+
+# Backend
+cd backend
+mvn clean package -DskipTests
+
+# Frontend
+cd ../Client
+npm install
+npm run build
+
+# Run in development
+npm run dev:electron
 ```
 
-2. Configuration:
+## Prerequisites
+- For Desktop App: Windows 10/11, Java 17+ (auto-check included)
+- For Development: Java 17, Node.js 18+, Maven, Git
+
+## Configuration:
 Add to application.properties:
 ```bash
 gemini.api.key=your_gemini_api_key
