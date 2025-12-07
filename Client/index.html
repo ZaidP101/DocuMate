@@ -1,10 +1,25 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <!-- CRITICAL FOR ELECTRON -->
+    <base href="./">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DocMate</title>
+    <title>DocuMate</title>
+    <script>
+      // Fix for Electron + React Router
+      window.addEventListener('DOMContentLoaded', () => {
+        if (window.location.protocol === 'file:') {
+          console.log('Electron detected, fixing URL...');
+          // Fix the URL for React Router
+          const path = window.location.pathname;
+          if (path.includes('dist/index.html')) {
+            window.history.replaceState({}, '', '/');
+            console.log('URL fixed for React Router');
+          }
+        }
+      });
+    </script>
   </head>
   <body>
     <div id="root"></div>

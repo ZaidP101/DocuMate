@@ -109,6 +109,24 @@ npm run build
 npm run package
 
 # Installer is now at: dist/DocuMate Setup 1.0.0.exe
+
+# To Completely Uninstall
+# 1. Uninstall the app
+# Settings → Apps → DocuMate → Uninstall
+
+# 2. Clean ALL build artifacts
+cd "C:\Users\(path)\Project\DocuMate"
+rmdir /s /q dist 2>nul
+rmdir /s /q Client\dist 2>nul
+rmdir /s /q Backend\target 2>nul
+cd Backend
+mvn clean  
+
+# 3. Clean caches
+cd Client
+npm cache clean --force
+rmdir /s /q node_modules\.cache 2>nul
+rmdir /s /q node_modules\.vite 2>nul
 ```
 
 ## Prerequisites

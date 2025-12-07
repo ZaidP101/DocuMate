@@ -65,9 +65,20 @@ public class GitHookService {
         
         REM Launch installed DocuMate
         timeout /t 2 /nobreak > nul
-        start "" "%ProgramFiles%\\DocuMate\\DocuMate.exe"
         
-        echo DocuMate launched for review!
+        REM Try multiple possible locations
+        if exist "%ProgramFiles%\\DocuMate\\DocuMate.exe" (
+            start "" "%ProgramFiles%\\DocuMate\\DocuMate.exe"
+        ) else if exist "%LOCALAPPDATA%\\Programs\\DocuMate\\DocuMate.exe" (
+            start "" "%LOCALAPPDATA%\\Programs\\DocuMate\\DocuMate.exe"
+        ) else (
+            echo DocuMate not found in standard locations
+            echo Checked:
+            echo - %%ProgramFiles%%\\DocuMate\\
+            echo - %%LOCALAPPDATA%%\\Programs\\DocuMate\\
+        )
+        
+        echo DocuMate launch attempted!
         """.formatted(projectId, projectPath.replace("\\", "\\\\"));
     }
 

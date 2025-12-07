@@ -3,9 +3,9 @@
   "private": true,
   "version": "1.0.0",
   "description": "AI-Powered Documentation Automation Platform",
-  "type": "module",
+  "type": "commonjs", 
   "author": "Zaid Patel & Amir Khan",
-  "main": "./electron/main.js",
+  "main": "electron/main.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development vite",
     "dev:electron": "cross-env NODE_ENV=development concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
@@ -13,7 +13,7 @@
     "preview": "vite preview",
     "electron:start": "cross-env NODE_ENV=production electron .",
     "electron:build": "npm run build && npm run electron:start",
-    "package": "npm run build && electron-builder --config ./electron-builder.json"
+    "package": "npm run build && electron-builder --config ./electron-builder.json --win"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.3",

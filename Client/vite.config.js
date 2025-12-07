@@ -5,15 +5,21 @@ import path from 'path';
 export default defineConfig(({ mode }) => ({
   plugins: [react()],
   
-  // Important: Use relative paths for production (Electron)
-  base: mode === 'production' ? './' : '/',
+  // CRITICAL: Always use './' for Electron
+  base: './',
   
   build: {
     outDir: 'dist',
     emptyOutDir: true,
+    // Add sourcemap for debugging
+    sourcemap: mode === 'development',
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, 'index.html')
+      },
+      output: {
+        // Ensure relative paths
+        assetFileNames: 'assets/[name].[hash][extname]'
       }
     }
   },
@@ -26,11 +32,18 @@ export default defineConfig(({ mode }) => ({
         changeOrigin: true
       }
     },
+    // Enable CORS for Electron
+    cors: true
   },
   
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src')
     }
+  },
+  
+  // Optimize for Electron
+  optimizeDeps: {
+    exclude: ['electron']
   }
 }));
