@@ -36,12 +36,6 @@ Real-time diff analysis of code changes
 Seamless integration with existing workflows
 No disruption to developer workflow
 
-## Desktop Application
-- Standalone Electron.js desktop app
-- No separate backend/frontend setup needed
-- Professional installer with custom branding
-- Auto-launches on Git commits
-
 ## How It Works
 
 1. Project Registration: Add your Git repository to DocuMate
@@ -86,54 +80,24 @@ No disruption to developer workflow
 - File Processing: Java NIO for filesystem operations
 - API: RESTful endpoints for all operations
 
-## Installation
+## Installation & Setup
 
-### Option 1: Desktop App 
-Download the installer from the [Download/](https://github.com/ZaidP101/DocuMate/tree/main/Download) folder:
-- [DocuMate Setup 1.0.0.exe](https://github.com/ZaidP101/DocuMate/raw/main/Download/DocuMate%20Setup%201.0.0.exe)
+### Prerequisites
+- Java 17 or higher
+- H2 Database
+- Git
+- Google Gemini API key
 
-### Option 2: Development Setup
+### Quick Start
+
+1. Clone & Build:
 ```bash
-# Clone repository
-git clone https://github.com/yourusername/DocuMate.git
-cd DocuMate
-
-# Backend
-cd Backend
-mvn clean package -DskipTests
-
-# Frontend
-cd ../Client
-npm install
-npm run build
-npm run package
-
-# Installer is now at: dist/DocuMate Setup 1.0.0.exe
-
-# To Completely Uninstall
-# 1. Uninstall the app
-# Settings → Apps → DocuMate → Uninstall
-
-# 2. Clean ALL build artifacts
-cd "C:\Users\(path)\Project\DocuMate"
-rmdir /s /q dist 2>nul
-rmdir /s /q Client\dist 2>nul
-rmdir /s /q Backend\target 2>nul
-cd Backend
-mvn clean  
-
-# 3. Clean caches
-cd Client
-npm cache clean --force
-rmdir /s /q node_modules\.cache 2>nul
-rmdir /s /q node_modules\.vite 2>nul
+git clone https://github.com/your-org/documate.git
+cd documate
+./mvnw clean install
 ```
 
-## Prerequisites
-- For Desktop App: Windows 10/11, Java 17+ (auto-check included)
-- For Development: Java 17, Node.js 18+, Maven, Git
-
-## Configuration:
+2. Configuration:
 Add to application.properties:
 ```bash
 gemini.api.key=your_gemini_api_key
@@ -243,3 +207,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - LinkedIn: www.linkedin.com/in/amir-khan-17159224a?utm_source=share_via&utm_content=profile&utm_medium=member_android
 
 DocuMate - Because great code deserves great documentation!
+

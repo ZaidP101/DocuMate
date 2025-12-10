@@ -1,19 +1,13 @@
 {
-  "name": "documate",
+  "name": "documate-frontend",
   "private": true,
-  "version": "1.0.0",
-  "description": "AI-Powered Documentation Automation Platform",
-  "type": "commonjs", 
-  "author": "Zaid Patel & Amir Khan",
+  "version": "0.0.0",
+  "type": "module",
   "main": "electron/main.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development vite",
-    "dev:electron": "cross-env NODE_ENV=development concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
+    "dev": "cross-env NODE_ENV=development concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
     "build": "cross-env NODE_ENV=production vite build",
-    "preview": "vite preview",
-    "electron:start": "cross-env NODE_ENV=production electron .",
-    "electron:build": "npm run build && npm run electron:start",
-    "package": "npm run build && electron-builder --config ./electron-builder.json --win"
+    "start": "cross-env NODE_ENV=production electron ."
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.3",
@@ -38,7 +32,6 @@
     "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
     "electron": "^29.4.6",
-    "electron-builder": "^24.13.3",
     "vite": "^7.1.7",
     "wait-on": "^7.0.1"
   }

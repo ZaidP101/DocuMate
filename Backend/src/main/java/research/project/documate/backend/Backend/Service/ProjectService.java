@@ -55,7 +55,7 @@ public class ProjectService {
     }
 
     public ProjectResponseDTO createProject(ProjectRegistrationDTO dto) {
-        validateGitRepository(dto.getLocalPath());
+        validateGitRepository(dto.getLocalPath()); // Validate git repository
         ProjectAnalysisDTO analysis = projectAnalysisService.analyzeProject(dto.getLocalPath());  // analyze project
 
         ProjectEntity project = new ProjectEntity();
