@@ -64,12 +64,12 @@ No disruption to developer workflow
 
 ## Supported File Types
 
-| File Type | Features | Auto-Update |
-|-----------|----------|-------------|
-| README.md | Project overview, installation, usage, API docs | On Git push |
-| Dockerfile | Multi-stage builds, security, optimization | On project changes |
-| .env.example | Environment variables, configuration templates | On project changes |
-| .gitignore | Technology-specific patterns, custom rules | On project changes |
+| File Type    | Features                                        | Auto-Update        |
+| ------------ | ----------------------------------------------- | ------------------ |
+| README.md    | Project overview, installation, usage, API docs | On Git push        |
+| Dockerfile   | Multi-stage builds, security, optimization      | On project changes |
+| .env.example | Environment variables, configuration templates  | On project changes |
+| .gitignore   | Technology-specific patterns, custom rules      | On project changes |
 
 ## Tech Stack
 
@@ -83,6 +83,7 @@ No disruption to developer workflow
 ## Installation & Setup
 
 ### Prerequisites
+
 - Java 17 or higher
 - H2 Database
 - Git
@@ -91,14 +92,23 @@ No disruption to developer workflow
 ### Quick Start
 
 1. Clone & Build:
+
 ```bash
 git clone https://github.com/your-org/documate.git
-cd documate
+
+# Backend(Java - Spring Boot)
+cd Backend
 ./mvnw clean install
+
+# Frontend
+cd Client
+npm install
+npm run dev
 ```
 
 2. Configuration:
-Add to application.properties:
+   Add to application.properties:
+
 ```bash
 gemini.api.key=your_gemini_api_key
 gemini.api.url=https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent
@@ -108,7 +118,9 @@ spring.datasource.url=jdbc:postgresql://localhost:5432/documate
 ## Usage
 
 ### 1. Add Your Project
+
 POST /api/projects
+
 ```bash
 {
 "title": "My Awesome Project",
@@ -119,6 +131,7 @@ POST /api/projects
 ```
 
 ### 2. Generate Documentation
+
 ```bash
 Generate all files
 - POST /api/projects/1/generate-all
@@ -129,6 +142,7 @@ Or generate specific files
 ```
 
 ### 3. Review & Approve Changes
+
 ```bash
 View generated diff
 - GET /api/readme/1/diff
@@ -144,23 +158,27 @@ Approve and deploy
 ## API Endpoints
 
 ### Projects
+
 - POST /api/projects - Register new project
 - GET /api/projects - List all projects
 - GET /api/projects/{id} - Get project details
 - DELETE /api/projects/{id} - Remove project
 
 ### README Management
+
 - POST /api/readme/{projectId}/generate - Generate README
 - GET /api/readme/{projectId}/diff - View changes
 - POST /api/readme/{projectId}/push - Deploy README
 - POST /api/readme/{projectId}/regenerate - AI regeneration
 
 ### Dockerfile Management
+
 - POST /api/docker/{projectId}/generate - Generate Dockerfile
 - POST /api/docker/{projectId}/push - Deploy Dockerfile
 - POST /api/docker/{projectId}/regenerate - AI regeneration
 
 ### Git Integration
+
 - POST /api/git/push-trigger - Manual Git trigger
 - GET /api/git/{projectId}/hooks - Manage Git hooks
 
@@ -196,15 +214,16 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Maintainers
 
-### Zaid Patel 
+### Zaid Patel
+
 - Backend
 - zpatel044@gmail.com
 - LinkedIn: www.linkedin.com/in/zaid-patel-ba5950222
 
 ### Amir Khan
+
 - Frontend
 - amirkhan11691@gmail.com
 - LinkedIn: www.linkedin.com/in/amir-khan-17159224a?utm_source=share_via&utm_content=profile&utm_medium=member_android
 
 DocuMate - Because great code deserves great documentation!
-
