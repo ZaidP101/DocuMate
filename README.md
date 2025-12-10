@@ -1,5 +1,13 @@
 # DocuMate
 
+> **Note:**  
+> This repository contains two versions of DocuMate:
+>
+> - **main branch** → Stand-alone desktop application.  
+>   You can build it to generate a `.exe` installer and use DocuMate as a full desktop app.
+> - **version1 branch** → Service-Oriented Architecture (SOA) version.  
+>   In this version, the **backend and frontend run separately**, and you must start both servers independently.
+
 DocuMate is an intelligent documentation automation platform that generates and maintains essential project files like READMEs, Dockerfiles, .env examples, and .gitignore files automatically. It analyzes your codebase, detects changes through Git operations, and provides AI-powered suggestions to keep your documentation always in sync with your code.
 
 ## Key Features
