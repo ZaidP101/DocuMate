@@ -13,11 +13,11 @@ import research.project.documate.backend.Backend.Entity.ProjectEntity;
 @Slf4j
 @AllArgsConstructor
 public class GitignoreAiService {
-    private final GeminiService geminiService;
+    private final DocumateAiService documateAiService;
 
     public GitignoreGenerationResultDTO generateGitignore(ProjectEntity project, ProjectAnalysisDTO analysis, String currentContent) {
         String prompt = createGitignorePrompt(project, analysis, currentContent);
-        String aiResponse = geminiService.generateContent(prompt);
+        String aiResponse = documateAiService.generateContent(prompt);
         return processGitignoreResponse(project, aiResponse);
     }
 
@@ -44,7 +44,7 @@ public class GitignoreAiService {
             Return the complete modified .gitignore:
             """, currentContent, userPrompt);
 
-        String aiResponse = geminiService.generateContent(prompt);
+        String aiResponse = documateAiService.generateContent(prompt);
         return processGitignoreResponse(project, aiResponse);
     }
 

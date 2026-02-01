@@ -13,11 +13,11 @@ import research.project.documate.backend.Backend.Entity.ProjectEntity;
 @Slf4j
 @AllArgsConstructor
 public class EnvExampleAiService {
-    private final GeminiService geminiService;
+    private final DocumateAiService documateAiService;
 
     public EnvExampleGenerationResultDTO generateEnvExample(ProjectEntity project, ProjectAnalysisDTO analysis, String currentContent) {
         String prompt = createEnvExamplePrompt(project, analysis, currentContent);
-        String aiResponse = geminiService.generateContent(prompt);
+        String aiResponse = documateAiService.generateContent(prompt);
         return processEnvExampleResponse(project, aiResponse);
     }
 
@@ -45,7 +45,7 @@ public class EnvExampleAiService {
             Return the complete modified .env.example:
             """, currentContent, userPrompt);
 
-        String aiResponse = geminiService.generateContent(prompt);
+        String aiResponse = documateAiService.generateContent(prompt);
         return processEnvExampleResponse(project, aiResponse);
     }
 

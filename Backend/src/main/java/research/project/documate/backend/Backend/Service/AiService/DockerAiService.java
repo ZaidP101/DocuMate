@@ -13,11 +13,11 @@ import research.project.documate.backend.Backend.Entity.ProjectEntity;
 @Slf4j
 @AllArgsConstructor
 public class DockerAiService {
-    private final GeminiService geminiService;
+    private final DocumateAiService documateAiService;
 
     public DockerGenerationResultDTO generateDockerFile(ProjectEntity project, ProjectAnalysisDTO analysis, String currentContent) {
         String prompt = createDockerPrompt(project, analysis, currentContent);
-        String aiResponse = geminiService.generateContent(prompt);
+        String aiResponse = documateAiService.generateContent(prompt);
         return processDockerResponse(project, aiResponse);
     }
 
@@ -44,7 +44,7 @@ public class DockerAiService {
             Return the complete modified Dockerfile:
             """, currentContent, userPrompt);
 
-        String aiResponse = geminiService.generateContent(prompt);
+        String aiResponse = documateAiService.generateContent(prompt);
         return processDockerResponse(project, aiResponse);
     }
 

@@ -18,16 +18,27 @@ import java.util.List;
 @Slf4j
 @AllArgsConstructor
 public class ReadmeAiService {
-    private final GeminiService geminiService;
+    private final DocumateAiService documateAiService;
 
     public ReadmeGenerationResultDTO generateReadme(ProjectEntity project, ProjectAnalysisDTO analysis) {
         String prompt = createDomainSpecificPrompt(project, analysis);
-        String aiResponse = geminiService.generateContent(prompt);
+        String aiResponse = documateAiService.generateContent(prompt);
         log.info("Response from AI: {}", aiResponse);
         return processAiResponse(project, aiResponse);
     }
 
     private ReadmeGenerationResultDTO processAiResponse(ProjectEntity project, String aiResponse) {
+        if (aiResponse.startsWith("Error while communicating with Groq API") ||
+                aiResponse.startsWith("Error while communicating with")) {
+            log.error("AI API error detected: {}", aiResponse);
+            return createDefaultReadme(project);
+        }
+
+        if (aiResponse == null || aiResponse.trim().isEmpty()) {
+            log.error("Empty AI response received");
+            return createDefaultReadme(project);
+        }
+
         try {
             log.info("Raw AI Response: {}", aiResponse);
             // Extract JSON from the response
@@ -112,10 +123,37 @@ public class ReadmeAiService {
 
     private String extractJsonFromResponse(String aiResponse) {
         try {
-            //parse the entire response as JSON first
             ObjectMapper mapper = new ObjectMapper();
             JsonNode rootNode = mapper.readTree(aiResponse);
-            //If it's the full Gemini response structure
+
+            log.info("Parsing Groq API response...");
+
+            // GROQ RESPONSE FORMAT (OpenAI compatible):
+            // {
+            //   "choices": [
+            //     {
+            //       "message": {
+            //         "content": "The AI response text here"
+            //       }
+            //     }
+            //   ]
+            // }
+
+            if (rootNode.has("choices")) {
+                JsonNode choices = rootNode.path("choices");
+                if (choices.isArray() && choices.size() > 0) {
+                    JsonNode firstChoice = choices.get(0);
+                    JsonNode message = firstChoice.path("message");
+
+                    if (message.has("content")) {
+                        String textContent = message.path("content").asText();
+                        log.info("Extracted content from Groq response: {} chars", textContent.length());
+                        return extractJsonFromText(textContent);
+                    }
+                }
+            }
+
+            // If not Groq format, check for Gemini format (If used Gemini Api key, do not use it has a low RPM rate)
             if (rootNode.has("candidates")) {
                 JsonNode textNode = rootNode.path("candidates")
                         .get(0)
@@ -130,7 +168,8 @@ public class ReadmeAiService {
             return aiResponse; // If it's already the JSON we need
 
         } catch (Exception e) {
-            log.info("Full response is not JSON, trying to extract JSON from text");
+            log.info("Full response is not JSON or parsing failed, trying to extract JSON from text");
+            log.error("Parsing error: {}", e.getMessage());
             return extractJsonFromText(aiResponse);
         }
     }
@@ -430,7 +469,7 @@ public class ReadmeAiService {
 
     public ReadmeGenerationResultDTO generateUpdatedReadme(ProjectEntity project, String currentContent, GitDiffAnalysisDTO diffAnalysis) {
         String prompt = createUpdatePrompt(project, currentContent, diffAnalysis);
-        String aiResponse = geminiService.generateContent(prompt);
+        String aiResponse = documateAiService.generateContent(prompt);
         return processAiResponse(project, aiResponse);
     }
 
@@ -477,7 +516,7 @@ public class ReadmeAiService {
             Please provide the improved README in the same JSON format.
             """, enhancedPrompt);
 
-        return processAiResponse(project, geminiService.generateContent(fullPrompt));
+        return processAiResponse(project, documateAiService.generateContent(fullPrompt));
     }
     private String getUserRequestPart(String enhancedPrompt) {
         if (enhancedPrompt.contains("User requested changes:")) { // Extract user request part from the enhanced prompt
