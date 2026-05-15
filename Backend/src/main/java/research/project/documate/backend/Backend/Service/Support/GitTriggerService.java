@@ -48,6 +48,11 @@ public class GitTriggerService {
 
             GitDiffAnalysisDTO diffAnalysis = gitDiffService.analyzeChanges(project, pushEvent.getCommitHash());
 
+            if (diffAnalysis.getFilesChanged() == 0) {
+                log.info("No actionable changes detected (or automated commit). Aborting README generation.");
+                return;
+            }
+
             String currentContent = currentReadme.getContent();
             ReadmeGenerationResultDTO newReadme = readmeAiService.generateUpdatedReadme(
                     project, currentContent, diffAnalysis);

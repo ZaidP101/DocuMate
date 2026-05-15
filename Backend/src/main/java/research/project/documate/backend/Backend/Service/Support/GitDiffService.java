@@ -51,6 +51,16 @@ public class GitDiffService {
             RevWalk revWalk = new RevWalk(repository); // Get previous commit (parent of HEAD)
             RevCommit currentCommit = revWalk.parseCommit(head);
 
+            String commitMessage = currentCommit.getFullMessage();
+            if (commitMessage.contains("-automated")) {
+                log.info("Automated system commit detected ({}). Skipping diff analysis to prevent hook loop.", commitHash);
+                revWalk.close();
+                git.close();
+                // Returning an empty diff analysis means filesChanged = 0.
+                // You should also update GitTriggerService to abort if filesChanged == 0
+                return createEmptyDiffAnalysis(commitHash);
+            }
+
             if (currentCommit.getParentCount() == 0) {
                 log.info("No parent commit found - this might be the initial commit");
                 revWalk.close();

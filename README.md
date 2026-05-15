@@ -1,12 +1,14 @@
 # DocuMate
 
 > **Note:**  
-> This repository contains two versions of DocuMate:
+> This repository contains multiple versions of DocuMate across different branches. Please refer to the appropriate branch based on your needs:
 >
+> - **prod branch** → Web Application.  
+>   This is the fully updated, stable, and working version of DocuMate. Please use this branch for the web-based experience.
 > - **main branch** → Stand-alone desktop application.  
->   You can build it to generate a `.exe` installer and use DocuMate as a full desktop app.
+>   You can build it to generate a `.exe` installer and use DocuMate as a full desktop app. Currently paused and under development.
 > - **version1 branch** → Service-Oriented Architecture (SOA) version.  
->   In this version, the **backend and frontend run separately**, and you must start both servers independently.
+>   In this version, the **backend and frontend run separately**, and you must start both servers independently. Currently paused and under development.
 
 DocuMate is an intelligent documentation automation platform that generates and maintains essential project files like READMEs, Dockerfiles, .env examples, and .gitignore files automatically. It analyzes your codebase, detects changes through Git operations, and provides AI-powered suggestions to keep your documentation always in sync with your code.
 
@@ -44,7 +46,11 @@ Real-time diff analysis of code changes
 Seamless integration with existing workflows
 No disruption to developer workflow
 
+![DocuMate Hand Shake](Doc/DocuMate_Hand_Shake.png)
+
 ## How It Works
+
+![DocuMate User Flow](Doc/DocuMate_User_Flow.png)
 
 1. Project Registration: Add your Git repository to DocuMate
 2. Code Analysis: System analyzes project structure, dependencies, and code patterns
@@ -54,6 +60,8 @@ No disruption to developer workflow
 6. One-Click Deployment: Approve changes to automatically update files and commit
 
 ## Architecture
+
+![DocuMate Architecture](Doc/DocuMate_Architecture.png)
 
 ```bash
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
