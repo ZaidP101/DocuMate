@@ -1,12 +1,14 @@
 # DocuMate
 
 > **Note:**  
-> This repository contains two versions of DocuMate:
+> This repository contains multiple versions of DocuMate across different branches. Please refer to the appropriate branch based on your needs:
 >
+> - **prod branch** → Web Application.  
+>   This is the fully updated, stable, and working version of DocuMate. Please use this branch for the web-based experience.
 > - **main branch** → Stand-alone desktop application.  
->   You can build it to generate a `.exe` installer and use DocuMate as a full desktop app.
+>   You can build it to generate a `.exe` installer and use DocuMate as a full desktop app. Currently paused and under development.
 > - **version1 branch** → Service-Oriented Architecture (SOA) version.  
->   In this version, the **backend and frontend run separately**, and you must start both servers independently.
+>   In this version, the **backend and frontend run separately**, and you must start both servers independently. Currently paused and under development.
 
 DocuMate is an intelligent documentation automation platform that generates and maintains essential project files like READMEs, Dockerfiles, .env examples, and .gitignore files automatically. It analyzes your codebase, detects changes through Git operations, and provides AI-powered suggestions to keep your documentation always in sync with your code.
 
@@ -44,13 +46,18 @@ Real-time diff analysis of code changes
 Seamless integration with existing workflows
 No disruption to developer workflow
 
+![DocuMate Hand Shake](Doc/DocuMate_Hand_Shake.png)
+
 ## Desktop Application
+
 - Standalone Electron.js desktop app
 - No separate backend/frontend setup needed
 - Professional installer with custom branding
 - Auto-launches on Git commits
 
 ## How It Works
+
+![DocuMate User Flow](Doc/DocuMate_User_Flow.png)
 
 1. Project Registration: Add your Git repository to DocuMate
 2. Code Analysis: System analyzes project structure, dependencies, and code patterns
@@ -60,6 +67,8 @@ No disruption to developer workflow
 6. One-Click Deployment: Approve changes to automatically update files and commit
 
 ## Architecture
+
+![DocuMate Architecture](Doc/DocuMate_Architecture.png)
 
 ```bash
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
@@ -78,12 +87,12 @@ No disruption to developer workflow
 
 ## Supported File Types
 
-| File Type | Features | Auto-Update |
-|-----------|----------|-------------|
-| README.md | Project overview, installation, usage, API docs | On Git push |
-| Dockerfile | Multi-stage builds, security, optimization | On project changes |
-| .env.example | Environment variables, configuration templates | On project changes |
-| .gitignore | Technology-specific patterns, custom rules | On project changes |
+| File Type    | Features                                        | Auto-Update        |
+| ------------ | ----------------------------------------------- | ------------------ |
+| README.md    | Project overview, installation, usage, API docs | On Git push        |
+| Dockerfile   | Multi-stage builds, security, optimization      | On project changes |
+| .env.example | Environment variables, configuration templates  | On project changes |
+| .gitignore   | Technology-specific patterns, custom rules      | On project changes |
 
 ## Tech Stack
 
@@ -96,11 +105,14 @@ No disruption to developer workflow
 
 ## Installation
 
-### Option 1: Desktop App 
+### Option 1: Desktop App
+
 Download the installer from the [Download/](https://github.com/ZaidP101/DocuMate/tree/main/Download) folder:
+
 - [DocuMate Setup 1.0.0.exe](https://github.com/ZaidP101/DocuMate/raw/main/Download/DocuMate%20Setup%201.0.0.exe)
 
 ### Option 2: Development Setup
+
 ```bash
 # Clone repository
 git clone https://github.com/yourusername/DocuMate.git
@@ -128,7 +140,7 @@ rmdir /s /q dist 2>nul
 rmdir /s /q Client\dist 2>nul
 rmdir /s /q Backend\target 2>nul
 cd Backend
-mvn clean  
+mvn clean
 
 # 3. Clean caches
 cd Client
@@ -138,11 +150,14 @@ rmdir /s /q node_modules\.vite 2>nul
 ```
 
 ## Prerequisites
+
 - For Desktop App: Windows 10/11, Java 17+ (auto-check included)
 - For Development: Java 17, Node.js 18+, Maven, Git
 
 ## Configuration:
+
 Add to application.properties:
+
 ```bash
 gemini.api.key=your_gemini_api_key
 gemini.api.url=https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent
@@ -152,7 +167,9 @@ spring.datasource.url=jdbc:postgresql://localhost:5432/documate
 ## Usage
 
 ### 1. Add Your Project
+
 POST /api/projects
+
 ```bash
 {
 "title": "My Awesome Project",
@@ -163,6 +180,7 @@ POST /api/projects
 ```
 
 ### 2. Generate Documentation
+
 ```bash
 Generate all files
 - POST /api/projects/1/generate-all
@@ -173,6 +191,7 @@ Or generate specific files
 ```
 
 ### 3. Review & Approve Changes
+
 ```bash
 View generated diff
 - GET /api/readme/1/diff
@@ -188,23 +207,27 @@ Approve and deploy
 ## API Endpoints
 
 ### Projects
+
 - POST /api/projects - Register new project
 - GET /api/projects - List all projects
 - GET /api/projects/{id} - Get project details
 - DELETE /api/projects/{id} - Remove project
 
 ### README Management
+
 - POST /api/readme/{projectId}/generate - Generate README
 - GET /api/readme/{projectId}/diff - View changes
 - POST /api/readme/{projectId}/push - Deploy README
 - POST /api/readme/{projectId}/regenerate - AI regeneration
 
 ### Dockerfile Management
+
 - POST /api/docker/{projectId}/generate - Generate Dockerfile
 - POST /api/docker/{projectId}/push - Deploy Dockerfile
 - POST /api/docker/{projectId}/regenerate - AI regeneration
 
 ### Git Integration
+
 - POST /api/git/push-trigger - Manual Git trigger
 - GET /api/git/{projectId}/hooks - Manage Git hooks
 
@@ -240,12 +263,14 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Maintainers
 
-### Zaid Patel 
+### Zaid Patel
+
 - Backend
 - zpatel044@gmail.com
 - LinkedIn: www.linkedin.com/in/zaid-patel-ba5950222
 
 ### Amir Khan
+
 - Frontend
 - amirkhan11691@gmail.com
 - LinkedIn: www.linkedin.com/in/amir-khan-17159224a?utm_source=share_via&utm_content=profile&utm_medium=member_android
