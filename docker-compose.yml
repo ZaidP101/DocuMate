@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: documate-backend
+    env_file:
+      - .env
+    environment:
+      - API_KEY=${API_KEY}
+    ports:
+      - "8181:8181"
+    volumes:
+      - documate-data:/app/data
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./Client
+      dockerfile: Dockerfile
+    container_name: documate-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  documate-data:
